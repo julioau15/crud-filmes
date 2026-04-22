@@ -23,7 +23,7 @@ const {
 const app = express()
 
 // Porta onde a API esta rodando
-const port = 8090
+const port = 8080
 
 // Conjuntos de Permissões a serem aplicadas no CORS da API
 const corsOptions = {
@@ -41,8 +41,10 @@ app.use(cors(corsOptions))
 app.post('/v1/senai/locadora/filme',bodyParserJSON, async (req,res) => {
     // recebe o conteudo dentro do body da requisição
     let dados = req.body
-    let result = await inserirNovoFilme(dados)
-    res.json(result)
+    let contentType = req.headers['content-type']
+
+    let result = await inserirNovoFilme(dados,contentType)
+    res.status(result.status_code).json(result)
 })
 
 // Serve para inicializar a API para receber requisições
