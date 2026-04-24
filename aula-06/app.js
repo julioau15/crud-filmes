@@ -38,13 +38,34 @@ const bodyParserJSON = bodyParser.json()
 // Configura as permissões da API através do CORS
 app.use(cors(corsOptions))
 
+// endpoint para inserir filme
 app.post('/v1/senai/locadora/filme',bodyParserJSON, async (req,res) => {
     // recebe o conteudo dentro do body da requisição
     let dados = req.body
     let contentType = req.headers['content-type']
 
     let result = await inserirNovoFilme(dados,contentType)
-    res.status(result.status_code).json(result)
+    res.json(result)
+})
+
+// endpoint para retornar todos filmes
+app.get('/v1/senai/locadora/filme', async (req,res) => {
+    let result = await listarFilme()
+    res.json(result)
+})
+
+// endpoint para buscar um filme pelo id
+app.get('/v1/senai/locadora/filme/:id', async (req,res) => {
+    let id = req.params.id
+    let result = await buscarFilme(id)
+    res.json(result)
+})
+
+// endpoint para deletar um filme pelo id
+app.delete('/v1/senai/locadora/filme/:id', async (req,res) => {
+    let id = req.params.id
+    let result = await excluirFilme(id)
+    res.json(result)
 })
 
 // Serve para inicializar a API para receber requisições

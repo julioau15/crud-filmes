@@ -19,34 +19,31 @@ const inserirNovoFilme = async (filme, contentType) => {
 
     try {
         // Valida se o formato de dados é JSON
-        if(String(contentType).toLowerCase() == 'application/json'){
+        if(String(contentType).toLowerCase() != 'application/json')
+            return message.ERROR_CONTENT_TYPE // Status code 415
 
-            let validar = await validarDados(filme)
+        let validar = await validarDados(filme)
 
-            // Se a função 'validarDados' retornar um JSON de erro, iremos retornar o erro ao app
-            if(validar){
-                return validar
-            }else { // Status code 400
+        // Se a função 'validarDados' retornar um JSON de erro, iremos retornar o erro ao app
+        if(validar){
+            return validar // Status code 400
 
-                // tenta inserir no banco
-                let result = await filmeDAO.insertFilme(filme)
+        }else { 
+            // tenta inserir no banco
+            let result = await filmeDAO.insertFilme(filme)
                 
-                if(result){ // Status code 201
-                    message.DEFAULT_MESSAGE.status = message.SUCESS_CREATED_ITEM.status
-                    message.DEFAULT_MESSAGE.status_code = message.SUCESS_CREATED_ITEM.status_code
-                    message.DEFAULT_MESSAGE.response = message.SUCESS_CREATED_ITEM.message
-                    return message.DEFAULT_MESSAGE
+            if(result){ 
+                message.DEFAULT_MESSAGE.status = message.SUCESS_CREATED_ITEM.status
+                message.DEFAULT_MESSAGE.status_code = message.SUCESS_CREATED_ITEM.status_code
+                message.DEFAULT_MESSAGE.response = message.SUCESS_CREATED_ITEM.message
+                return message.DEFAULT_MESSAGE // Status code 201
 
-                } // Status code 500
-                return message.ERROR_INTERNAL_SERVER_MODEL
-            }
-
-        }else { // Status code 415
-            return message.ERROR_CONTENT_TYPE
+            } 
+            return message.ERROR_INTERNAL_SERVER_MODEL // Status code 500
         }
 
-    } catch (error) { // Status code 500
-        return message.ERROR_INTERNAL_SERVER_CONTROLLER    
+    } catch (error) {
+        return message.ERROR_INTERNAL_SERVER_CONTROLLER // Status code 500  
     }
 }
 
@@ -57,17 +54,87 @@ const atualizarFilme = async (filme) => {
 
 // Função para retornar Todos filmes
 const listarFilme = async () => {
+    let message = JSON.parse(JSON.stringify(config_message))
+    try {
+        // executa a função para retornar todos os filmes
+        let result = await filmeDAO.selectAllFilme()
+
+        if(result){
+            // verfica se o array é vazio
+            if(result.length > 0){
+                message.DEFAULT_MESSAGE.status = message.SUCESS_RESPONSE.status
+                message.DEFAULT_MESSAGE.status_code = message.SUCESS_RESPONSE.status_code
+                message.DEFAULT_MESSAGE.response.count = result.length
+                message.DEFAULT_MESSAGE.response.filme = result
+                return message.DEFAULT_MESSAGE // status_code 200
+            }
+
+            return message.ERROR_NOT_FOUND // status_code 404
+
+        } else
+            return message.ERROR_INTERNAL_SERVER_MODEL // status_code 500
+
+    } catch (error) {
+        return message.ERROR_INTERNAL_SERVER_CONTROLLER // status_code 500
+    }
     
 }
 
 // Função para buscar um filme pelo ID
 const buscarFilme = async (id) => {
+    let message = JSON.parse(JSON.stringify(config_message))
+    try {
+        // tratamentos dados incorretos
+        if (id.trim() == '' || id == null || id == undefined || id < 1 || isNaN(id)){
+            message.DEFAULT_MESSAGE.field = '[ID] INVÁLIDO'
+            return message.ERROR_BAD_REQUEST // status_code 400
+        }
+        // executa a função para retornar um filme pelo id
+        let result = await filmeDAO.selectByIdFilme(id)
+
+        if(result){
+            // verfica se o array é vazio
+            if(result.length > 0){
+                message.DEFAULT_MESSAGE.status = message.SUCESS_RESPONSE.status
+                message.DEFAULT_MESSAGE.status_code = message.SUCESS_RESPONSE.status_code
+                message.DEFAULT_MESSAGE.response.filme = result
+                return message.DEFAULT_MESSAGE // status_code 200
+            }
+
+            return message.ERROR_NOT_FOUND // status_code 404
+
+        } else
+            return message.ERROR_INTERNAL_SERVER_MODEL // status_code 500
+
+    } catch (error) {
+        return message.ERROR_INTERNAL_SERVER_CONTROLLER // status_code 500
+    }
     
 }
 
 // Função para excluir um filme
 const excluirFilme = async (id) => {
-    
+    let message = JSON.parse(JSON.stringify(config_message))
+
+    try {
+        // tratamentos dados incorretos
+        if (id.trim() == '' || id == null || id == undefined || id < 1 || isNaN(id)){
+            message.DEFAULT_MESSAGE.field = '[ID] INVÁLIDO'
+            return message.ERROR_BAD_REQUEST // status_code 400
+        }
+
+        // executa a função que deleta um filme pelo id no banco de dados
+        let result = await filmeDAO.deleteFilme(id)
+
+        if(result){
+            return message.SUCESS_RESPONSE // status_code 200
+        }else{
+            return message.ERROR_INTERNAL_SERVER_MODEL // status_code 500
+        }
+        
+    } catch (error) {
+        return message.ERROR_INTERNAL_SERVER_CONTROLLER // status_code 500
+    }
 }
 
 // Função para validar todos os dados de filme (Obrigatórios, Quantidade de caracteres, etc)
@@ -100,6 +167,7 @@ const validarDados = async (filme) => {
         return message.ERROR_BAD_REQUEST
     }else{
         return false
+        
     }
 }
 
