@@ -2,7 +2,7 @@
  * Objetivo: Arquivo responsável pelo CRUD bo Banco de dados MYSQL na tabela filme
  * Data: 15/04/2026
  * Autor: Julio Augusto
- * Versão: 1.0
+ * Versão: 1.0.4.26
  * *********************************************************************************/
 
 // Import da biblioteca para gerenciar o DB MySQL no node.js
@@ -54,7 +54,31 @@ const insertFilme = async (filme) => {
 
 // Função para atualizar dados da tabela de filme
 const updateFilme = async (filme) => {
+    try {
+        let sql = `
+        UPDATE tbl_filme
+	    SET nome = '${filme.nome}',
+	    data_lancamento = '${filme.data_lancamento}',  
+	    duracao = '${filme.duracao}',
+	    sinopse = '${filme.sinopse}',
+	    avaliacao = if('${filme.avaliacao}' = '', null, '${filme.avaliacao}'), 
+  	    valor = '${filme.valor}',
+  	    capa = '${filme.capa}'
+        WHERE id = ${filme.id}
+        `
+        // Executa script SQL no banco de dados            
+        let result = await knexConex.raw(sql)
+        
+        if(result)
+            return true
 
+        return false
+
+    } catch (error) {
+        console.log(error)
+        return false
+    }
+    
 }
 
 // Função para retornar todos os dados da tabela de filme

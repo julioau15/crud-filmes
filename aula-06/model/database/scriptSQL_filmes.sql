@@ -55,9 +55,21 @@ INSERT INTO tbl_filme
         73.57,
         'https://br.web.img3.acsta.net/c_310_420/medias/nmedia/18/90/93/20/20120876.jpg');
 
-SELECT * FROM tbl_filme;
+SELECT * FROM tbl_filme ORDER BY id desc;
 #SELECT * FROM tbl_filme
 #WHERE id = 1
 #ORDER BY id DESC;
 
 #TRUNCATE TABLE tbl_filme;
+
+
+#UPDATE tbl_filme
+#	SET nome = '',
+#	data_lancamento = 2004-10-20,  
+#	duracao = 1.3,
+#	sinopse = '',
+#	avaliacao = 1, 
+#	valor = 1,
+#  	capa = ''
+#    WHERE id = 9
+#    LIMIT 1;
