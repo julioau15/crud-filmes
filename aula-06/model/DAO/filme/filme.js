@@ -42,7 +42,7 @@ const insertFilme = async (filme) => {
         let result = await knexConex.raw(sql)
 
         if(result)
-            return true
+            return result[0].insertId
         else
             return false
 
@@ -70,7 +70,7 @@ const updateFilme = async (filme) => {
         let result = await knexConex.raw(sql)
         
         if(result)
-            return true
+            return result
 
         return false
 
@@ -131,7 +131,7 @@ const deleteFilme = async (id) => {
         let result = await knexConex.raw(sql)
 
         if(result){
-            return true
+            return result
         }
         return false
     } catch (error) {

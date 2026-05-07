@@ -18,6 +18,13 @@ const {
     buscarFilme,
     excluirFilme
 } = require('./controller/filme/controller_filme.js')
+const { 
+    inserirNovoGenero,
+    atualizarGenero,
+    listarGenero,
+    buscarGenero,
+    excluirGenero
+} = require('./controller/genero/controller_genero.js')
 
 // Criando um objeto para manipular o EXPRESS
 const app = express()
@@ -122,6 +129,50 @@ app.delete('/v1/senai/locadora/filme/:id', async (req,res) => {
     let result = await excluirFilme(id)
     res.status(result.status_code).json(result)
 })
+
+// ---------------- GENERO -----------------
+
+// endpoint para inserir genero
+app.post('/v1/senai/locadora/genero',bodyParserJSON, async (req,res) => {
+    // recebe o conteudo dentro do body da requisição
+    let dados = req.body
+    let contentType = req.headers['content-type']
+
+    let result = await inserirNovoGenero(dados,contentType)
+    res.status(result.status_code).json(result)
+})
+
+// endpoint para retornar todos filmes
+app.get('/v1/senai/locadora/genero', async (req,res) => {
+    let result = await listarGenero()
+    res.status(result.status_code).json(result)
+})
+
+// endpoint para buscar um genero pelo id
+app.get('/v1/senai/locadora/genero/:id', async (req,res) => {
+    let id = req.params.id
+    let result = await buscarGenero(id)
+    res.status(result.status_code).json(result)
+})
+
+// endpoint para atualizar um genero pelo id
+app.put('/v1/senai/locadora/genero/:id', bodyParserJSON, async (req,res) => {
+    let id          = req.params.id                 // Recebe o id por parametro
+    let dados       = req.body                      // Recebe os dados do body da requisição
+    let contentType = req.headers['content-type']   // Recebe o ContentType do header da requisição
+    
+    let result      = await atualizarGenero(dados, id, contentType)
+    res.status(result.status_code).json(result)
+})
+
+// endpoint para deletar um genero pelo id
+app.delete('/v1/senai/locadora/genero/:id', async (req,res) => {
+    let id = req.params.id
+    let result = await excluirGenero(id)
+    res.status(result.status_code).json(result)
+})
+
+
 
 // Serve para inicializar a API para receber requisições
 app.listen(port, () => {

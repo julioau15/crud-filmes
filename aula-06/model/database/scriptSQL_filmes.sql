@@ -1,3 +1,4 @@
+DROP DATABASE IF EXISTS db_filmes_20261_a;
 # Cria database do projeto de filmes
 CREATE DATABASE IF NOT EXISTS db_filmes_20261_a;
 
@@ -6,6 +7,7 @@ USE db_filmes_20261_a;
 
 DROP TABLE IF EXISTS tbl_filme;
 
+-- Cria tabela tbl_filme
 CREATE TABLE IF NOT EXISTS tbl_filme (
   id int NOT NULL AUTO_INCREMENT,
   nome varchar(80) NOT NULL,
@@ -17,6 +19,141 @@ CREATE TABLE IF NOT EXISTS tbl_filme (
   capa varchar(255) DEFAULT NULL,
   PRIMARY KEY (id)
 );
+
+# Cria tabela tbl_genero
+CREATE TABLE IF NOT EXISTS tbl_genero (
+	id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    genero VARCHAR(50) NOT NULL
+);
+
+# Cria tabela tbl_classificacao
+CREATE TABLE IF NOT EXISTS tbl_classificacao (
+	id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    idade INT NOT NULL,
+    classificacao VARCHAR(80) NOT NULL,
+    descricao VARCHAR(250) NOT NULL
+);
+
+# Cria tabela tbl_nacionalidade
+CREATE TABLE IF NOT EXISTS tbl_nacionalidade (
+	id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    pais VARCHAR(100) NOT NULL,
+    sigla VARCHAR(5)
+);
+
+# Cria tabela tbl_atividade
+CREATE TABLE IF NOT EXISTS tbl_atividade (
+	id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL
+);
+
+# Cria tabela tbl_diretor
+CREATE TABLE IF NOT EXISTS tbl_diretor (
+	id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    data_nascimento DATE NOT NULL,
+    data_falecimento DATE,
+    ativo BOOLEAN NOT NULL,
+    biografia VARCHAR(250) NOT NULL,
+    foto VARCHAR(255)
+);
+
+# Cria tabela tbl_ator
+CREATE TABLE IF NOT EXISTS tbl_ator (
+	id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    data_nascimento DATE NOT NULL,
+    data_falecimento DATE,
+    ativo BOOLEAN NOT NULL,
+    biografia VARCHAR(250) NOT NULL,
+    foto VARCHAR(255)
+);
+
+# Cria tabela tbl_filme_genero_ator_diretor
+CREATE TABLE IF NOT EXISTS tbl_filme_genero_ator_diretor(
+	id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id_filme INT NOT NULL,
+    id_genero INT NOT NULL,
+    id_diretor INT NOT NULL,
+    id_ator INT NOT NULL,
+    
+    CONSTRAINT FK_FILME_FILMEGENEROATORDIRETOR 
+    FOREIGN KEY (id_filme)	
+    REFERENCES tbl_filme (id),
+    
+    CONSTRAINT FK_GENERO_FILMEGENEROATORDIRETOR 
+    FOREIGN KEY (id_genero)	
+    REFERENCES tbl_genero (id),
+    
+    CONSTRAINT FK_DIRETOR_FILMEGENEROATORDIRETOR 
+    FOREIGN KEY (id_diretor)	
+    REFERENCES tbl_diretor (id),
+    
+    CONSTRAINT FK_ATOR_FILMEGENEROATORDIRETOR 
+    FOREIGN KEY (id_ator)	
+    REFERENCES tbl_ator (id)
+);
+
+# Cria tabela tbl_diretor_nacionalidade
+CREATE TABLE IF NOT EXISTS tbl_diretor_nacionalidade(
+	id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id_diretor INT NOT NULL,
+    id_nacionalidade INT NOT NULL,
+    
+    CONSTRAINT FK_DIRETOR_DIRETORNACIONALIDADE
+    FOREIGN KEY (id_diretor)	
+    REFERENCES tbl_diretor (id),
+    
+    CONSTRAINT FK_NACIONALIDADE_DIRETORNACIONALIDADE 
+    FOREIGN KEY (id_nacionalidade)	
+    REFERENCES tbl_nacionalidade (id)
+);
+
+# Cria tabela tbl_ator_nacionalidade
+CREATE TABLE IF NOT EXISTS tbl_ator_nacionalidade(
+	id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id_ator INT NOT NULL,
+    id_nacionalidade INT NOT NULL,
+    
+    CONSTRAINT FK_ATOR_ATORNACIONALIDADE
+    FOREIGN KEY (id_ator)	
+    REFERENCES tbl_ator (id),
+    
+    CONSTRAINT FK_NACIONALIDADE_ATORNACIONALIDADE 
+    FOREIGN KEY (id_nacionalidade)	
+    REFERENCES tbl_nacionalidade (id)
+);
+
+# Cria tabela tbl_ator_atividade
+CREATE TABLE IF NOT EXISTS tbl_ator_atividade(
+	id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id_ator INT NOT NULL,
+    id_atividade INT NOT NULL,
+    
+    CONSTRAINT FK_ATOR_ATORATIVIDADE
+    FOREIGN KEY (id_ator)	
+    REFERENCES tbl_ator (id),
+    
+    CONSTRAINT FK_ATIVIDADE_ATORATIVIDADE
+    FOREIGN KEY (id_atividade)	
+    REFERENCES tbl_atividade (id)
+);
+
+# Cria tabela tbl_diretor_atividade
+CREATE TABLE IF NOT EXISTS tbl_diretor_atividade(
+	id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id_diretor INT NOT NULL,
+    id_atividade INT NOT NULL,
+    
+    CONSTRAINT FK_DIRETOR_DIRETORATIVIDADE
+    FOREIGN KEY (id_diretor)	
+    REFERENCES tbl_diretor (id),
+    
+    CONSTRAINT FK_ATIVIDADE_DIRETORATIVIDADE
+    FOREIGN KEY (id_atividade)	
+    REFERENCES tbl_atividade (id)
+);
+
 
 INSERT INTO tbl_filme
 	(nome,data_lancamento,duracao,sinopse,avaliacao,valor,capa)
@@ -56,20 +193,3 @@ INSERT INTO tbl_filme
         'https://br.web.img3.acsta.net/c_310_420/medias/nmedia/18/90/93/20/20120876.jpg');
 
 SELECT * FROM tbl_filme ORDER BY id desc;
-#SELECT * FROM tbl_filme
-#WHERE id = 1
-#ORDER BY id DESC;
-
-#TRUNCATE TABLE tbl_filme;
-
-
-#UPDATE tbl_filme
-#	SET nome = '',
-#	data_lancamento = 2004-10-20,  
-#	duracao = 1.3,
-#	sinopse = '',
-#	avaliacao = 1, 
-#	valor = 1,
-#  	capa = ''
-#    WHERE id = 9
-#    LIMIT 1;
