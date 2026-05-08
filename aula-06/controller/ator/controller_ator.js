@@ -17,18 +17,13 @@ const inserirNovoAtor = async (ator, contentType) => {
 
         let result = await atorDAO.insertAtor(ator)
 
-        if(!result) return message.ERROR_INTERNAL_SERVER_MODEL
+        if(!result) return message.ERROR_INTERNAL_SERVER_MODEL // 500
 
         ator.id = result
-        message.DEFAULT_MESSAGE.status = message.SUCESS_CREATED_ITEM.status
-        message.DEFAULT_MESSAGE.status_code = message.SUCESS_CREATED_ITEM.status_code
-        message.DEFAULT_MESSAGE.message = message.SUCESS_CREATED_ITEM.message
-        message.DEFAULT_MESSAGE.response = ator
+        return await montarMensagem(message, message.SUCESS_CREATED_ITEM, ator) // 201
 
-        return message.DEFAULT_MESSAGE // Status code 201
-
-    } catch (error) {}
-    return message.ERROR_INTERNAL_SERVER_CONTROLLER
+    } catch (error) {console.log(error)}
+    return message.ERROR_INTERNAL_SERVER_CONTROLLER // 500
 }
 
 // atualizar ator
@@ -42,19 +37,14 @@ const atualizarAtor = async (ator, id, contentType) => {
         let resultBuscarId = await buscarAtor(id)
         if(!resultBuscarId.status) return resultBuscarId // 400 e 404
 
-        ator.id = id
+        ator.id = Number(id)
         let result = await atorDAO.updateAtor(ator)
 
         if(!result) return message.ERROR_INTERNAL_SERVER_MODEL // 500
 
-        message.DEFAULT_MESSAGE.status = message.SUCESS_UPDATE_ITEM.status
-        message.DEFAULT_MESSAGE.status_code = message.SUCESS_UPDATE_ITEM.status_code
-        message.DEFAULT_MESSAGE.message = message.SUCESS_UPDATE_ITEM.message
-        message.DEFAULT_MESSAGE.response = ator
-        
-        return message.DEFAULT_MESSAGE // Status code 200
+        return await montarMensagem(message, message.SUCESS_UPDATE_ITEM, ator) // 200
 
-    } catch (error) {}
+    } catch (error) {console.log(error)}
     return message.ERROR_INTERNAL_SERVER_CONTROLLER // 500
 }
 
@@ -77,7 +67,7 @@ const listarAtor = async () => {
 
         return message.DEFAULT_MESSAGE // status_code 200
 
-    } catch (error) {}
+    } catch (error) {console.log(error)}
     return message.ERROR_INTERNAL_SERVER_CONTROLLER // 500
 }
 
@@ -94,13 +84,9 @@ const buscarAtor = async (id) => {
 
         if(!result) return message.ERROR_INTERNAL_SERVER_MODEL // 500
 
-        if(result.length <= 0) return config_message.ERROR_NOT_FOUND
+        if(result.length <= 0) return config_message.ERROR_NOT_FOUND // 404
 
-        message.DEFAULT_MESSAGE.status = message.SUCESS_RESPONSE.status
-        message.DEFAULT_MESSAGE.status_code = message.SUCESS_RESPONSE.status_code
-        message.DEFAULT_MESSAGE.response = result
-        
-        return message.DEFAULT_MESSAGE // Status code 200
+        return await montarMensagem(message, message.SUCESS_RESPONSE, result)
 
     } catch (error) {console.log(error)}
     return message.ERROR_INTERNAL_SERVER_CONTROLLER // 500
@@ -119,13 +105,9 @@ const excluirAtor = async (id) => {
 
         if(!result) return message.ERROR_INTERNAL_SERVER_MODEL // 500
 
-        message.DEFAULT_MESSAGE.status = message.SUCESS_DELETE_ITEM.status
-        message.DEFAULT_MESSAGE.status_code = message.SUCESS_DELETE_ITEM.status_code
-        message.DEFAULT_MESSAGE.message = message.SUCESS_DELETE_ITEM.message
-        
-        return message.DEFAULT_MESSAGE // Status code 200
+        return await montarMensagem(message, message.SUCESS_DELETE_ITEM) // 200
 
-    } catch (error) {}
+    } catch (error) {console.log(error)}
     return message.ERROR_INTERNAL_SERVER_CONTROLLER // 500
 }
 
@@ -135,37 +117,47 @@ const validarDados = async (ator, contentType) => {
     // Valida se o formato de dados é JSON
     if(String(contentType).toLowerCase() != 'application/json') return message.ERROR_CONTENT_TYPE // Status code 415
 
-    if(ator.nome == undefined || ator.nome == null || ator.nome == '' || ator.nome.length > 100 || !isNaN(ator.nome)){
+    if(ator.nome == undefined || ator.nome == null || ator.nome == '' || ator.nome.length > 100 || typeof(ator.nome) != 'string'){
         message.ERROR_BAD_REQUEST.field = '[NOME] INVÁLIDO'
         return message.ERROR_BAD_REQUEST // 400
     }
 
-    if(ator.data_nascimento == undefined || ator.data_nascimento == null || ator.data_nascimento == '' || ator.data_nascimento.length != 10 || !isNaN(ator.data_nascimento)){
+    if(ator.data_nascimento == undefined || ator.data_nascimento == null || ator.data_nascimento == '' || ator.data_nascimento.length != 10 || typeof(ator.data_nascimento) != 'string'){
         message.ERROR_BAD_REQUEST.field = '[DATA NASCIMENTO] INVÁLIDO'
         return message.ERROR_BAD_REQUEST // 400
     }
 
-    if(ator.data_falecimento.length > 10 || !isNaN(String(ator.data_falecimento))){
+    if(ator.data_falecimento.length > 10){
         message.ERROR_BAD_REQUEST.field = '[DATA FALECIMENTO] INVÁLIDO'
         return message.ERROR_BAD_REQUEST // 400
     }
 
-    if(ator.ativo == undefined || ator.ativo == null || ator.ativo == '' || ator.ativo.length > 1 || isNaN(ator.ativo)){
+    if(ator.ativo == null || ator.ativo != 0 && ator.ativo != 1){
         message.ERROR_BAD_REQUEST.field = '[ATIVO] INVÁLIDO'
         return message.ERROR_BAD_REQUEST // 400
     }
 
-    if(ator.biografia == undefined || ator.biografia == null || ator.biografia == '' || ator.biografia.length > 250 || !isNaN(ator.biografia)){
+    if(ator.biografia == undefined || ator.biografia == null || ator.biografia == '' || ator.biografia.length > 250 || typeof(ator.biografia) != 'string'){
         message.ERROR_BAD_REQUEST.field = '[BIOGRAFIA] INVÁLIDO'
         return message.ERROR_BAD_REQUEST // 400
     }
 
-    if(ator.foto.length > 255 || !isNaN(ator.foto)){
+    if(ator.foto.length > 255){
         message.ERROR_BAD_REQUEST.field = '[FOTO] INVÁLIDO'
         return message.ERROR_BAD_REQUEST // 400
     }
 
     return false
+}
+
+const montarMensagem = async (base,status,response = null) => {
+    base.DEFAULT_MESSAGE.status = status.status
+    base.DEFAULT_MESSAGE.status_code = status.status_code
+    base.DEFAULT_MESSAGE.message = status.message
+
+    if(response != null) base.DEFAULT_MESSAGE.response = response
+
+    return base.DEFAULT_MESSAGE // 200 ou 201
 }
 
 const validarId = async (id) => {

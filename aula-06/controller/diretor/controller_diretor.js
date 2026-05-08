@@ -20,14 +20,9 @@ const inserirNovoDiretor = async (diretor, contentType) => {
         if(!result) return message.ERROR_INTERNAL_SERVER_MODEL
 
         diretor.id = result
-        message.DEFAULT_MESSAGE.status = message.SUCESS_CREATED_ITEM.status
-        message.DEFAULT_MESSAGE.status_code = message.SUCESS_CREATED_ITEM.status_code
-        message.DEFAULT_MESSAGE.message = message.SUCESS_CREATED_ITEM.message
-        message.DEFAULT_MESSAGE.response = diretor
+        return await montarMensagem(message, message.SUCESS_CREATED_ITEM, diretor)
 
-        return message.DEFAULT_MESSAGE // Status code 201
-
-    } catch (error) {}
+    } catch (error) {console.log(error)}
     return message.ERROR_INTERNAL_SERVER_CONTROLLER
 }
 
@@ -42,23 +37,18 @@ const atualizarDiretor = async (diretor, id, contentType) => {
         let resultBuscarId = await buscarDiretor(id)
         if(!resultBuscarId.status) return resultBuscarId // 400 e 404
 
-        diretor.id = id
+        diretor.id = Number(id)
         let result = await diretorDAO.updateDiretor(diretor)
 
         if(!result) return message.ERROR_INTERNAL_SERVER_MODEL // 500
 
-        message.DEFAULT_MESSAGE.status = message.SUCESS_UPDATE_ITEM.status
-        message.DEFAULT_MESSAGE.status_code = message.SUCESS_UPDATE_ITEM.status_code
-        message.DEFAULT_MESSAGE.message = message.SUCESS_UPDATE_ITEM.message
-        message.DEFAULT_MESSAGE.response = diretor
-        
-        return message.DEFAULT_MESSAGE // Status code 200
+        return await montarMensagem(message, message.SUCESS_UPDATE_ITEM, diretor) // 200
 
-    } catch (error) {}
+    } catch (error) {console.log(error)}
     return message.ERROR_INTERNAL_SERVER_CONTROLLER // 500
 }
 
-// listar todas diretors
+// listar todas diretores
 const listarDiretor = async () => {
     let message = JSON.parse(JSON.stringify(config_message))
 
@@ -77,7 +67,7 @@ const listarDiretor = async () => {
 
         return message.DEFAULT_MESSAGE // status_code 200
 
-    } catch (error) {}
+    } catch (error) {console.log(error)}
     return message.ERROR_INTERNAL_SERVER_CONTROLLER // 500
 }
 
@@ -96,11 +86,7 @@ const buscarDiretor = async (id) => {
 
         if(result.length <= 0) return config_message.ERROR_NOT_FOUND
 
-        message.DEFAULT_MESSAGE.status = message.SUCESS_RESPONSE.status
-        message.DEFAULT_MESSAGE.status_code = message.SUCESS_RESPONSE.status_code
-        message.DEFAULT_MESSAGE.response = result
-        
-        return message.DEFAULT_MESSAGE // Status code 200
+        return await montarMensagem(message, message.SUCESS_RESPONSE, result)
 
     } catch (error) {console.log(error)}
     return message.ERROR_INTERNAL_SERVER_CONTROLLER // 500
@@ -119,13 +105,9 @@ const excluirDiretor = async (id) => {
 
         if(!result) return message.ERROR_INTERNAL_SERVER_MODEL // 500
 
-        message.DEFAULT_MESSAGE.status = message.SUCESS_DELETE_ITEM.status
-        message.DEFAULT_MESSAGE.status_code = message.SUCESS_DELETE_ITEM.status_code
-        message.DEFAULT_MESSAGE.message = message.SUCESS_DELETE_ITEM.message
-        
-        return message.DEFAULT_MESSAGE // Status code 200
+        return await montarMensagem(message, message.SUCESS_DELETE_ITEM)
 
-    } catch (error) {}
+    } catch (error) {console.log(error)}
     return message.ERROR_INTERNAL_SERVER_CONTROLLER // 500
 }
 
@@ -135,32 +117,32 @@ const validarDados = async (diretor, contentType) => {
     // Valida se o formato de dados é JSON
     if(String(contentType).toLowerCase() != 'application/json') return message.ERROR_CONTENT_TYPE // Status code 415
 
-    if(diretor.nome == undefined || diretor.nome == null || diretor.nome == '' || diretor.nome.length > 100 || !isNaN(diretor.nome)){
+    if(diretor.nome == undefined || diretor.nome == null || diretor.nome == '' || diretor.nome.length > 100 || typeof(diretor.nome) != 'string'){
         message.ERROR_BAD_REQUEST.field = '[NOME] INVÁLIDO'
         return message.ERROR_BAD_REQUEST // 400
     }
 
-    if(diretor.data_nascimento == undefined || diretor.data_nascimento == null || diretor.data_nascimento == '' || diretor.data_nascimento.length != 10 || !isNaN(diretor.data_nascimento)){
+    if(diretor.data_nascimento == undefined || diretor.data_nascimento == null || diretor.data_nascimento == '' || diretor.data_nascimento.length != 10 || typeof(diretor.data_nascimento) != 'string'){
         message.ERROR_BAD_REQUEST.field = '[DATA NASCIMENTO] INVÁLIDO'
         return message.ERROR_BAD_REQUEST // 400
     }
 
-    if(diretor.data_falecimento.length > 10 || !isNaN(String(diretor.data_falecimento))){
+    if(diretor.data_falecimento.length > 10){
         message.ERROR_BAD_REQUEST.field = '[DATA FALECIMENTO] INVÁLIDO'
         return message.ERROR_BAD_REQUEST // 400
     }
 
-    if(diretor.ativo == undefined || diretor.ativo == null || diretor.ativo == '' || diretor.ativo.length > 1 || isNaN(diretor.ativo)){
+    if(diretor.ativo == null || diretor.ativo != 0 && diretor.ativo != 1){
         message.ERROR_BAD_REQUEST.field = '[ATIVO] INVÁLIDO'
         return message.ERROR_BAD_REQUEST // 400
     }
 
-    if(diretor.biografia == undefined || diretor.biografia == null || diretor.biografia == '' || diretor.biografia.length > 250 || !isNaN(diretor.biografia)){
+    if(diretor.biografia == undefined || diretor.biografia == null || diretor.biografia == '' || diretor.biografia.length > 250 || typeof(diretor.biografia) != 'string'){
         message.ERROR_BAD_REQUEST.field = '[BIOGRAFIA] INVÁLIDO'
         return message.ERROR_BAD_REQUEST // 400
     }
 
-    if(diretor.foto.length > 255 || !isNaN(diretor.foto)){
+    if(diretor.foto.length > 255){
         message.ERROR_BAD_REQUEST.field = '[FOTO] INVÁLIDO'
         return message.ERROR_BAD_REQUEST // 400
     }
@@ -177,6 +159,16 @@ const validarId = async (id) => {
     }
 
     return false
+}
+
+const montarMensagem = async (base,status,response = null) => {
+    base.DEFAULT_MESSAGE.status = status.status
+    base.DEFAULT_MESSAGE.status_code = status.status_code
+    base.DEFAULT_MESSAGE.message = status.message
+
+    if(response != null) base.DEFAULT_MESSAGE.response = response
+
+    return base.DEFAULT_MESSAGE
 }
 
 module.exports = {

@@ -19,13 +19,8 @@ const inserirNovaClassificacao = async (classificacao, contentType) => {
 
         if(!result) return message.ERROR_INTERNAL_SERVER_MODEL
 
-        classificacao.id = result
-        message.DEFAULT_MESSAGE.status = message.SUCESS_CREATED_ITEM.status
-        message.DEFAULT_MESSAGE.status_code = message.SUCESS_CREATED_ITEM.status_code
-        message.DEFAULT_MESSAGE.message = message.SUCESS_CREATED_ITEM.message
-        message.DEFAULT_MESSAGE.response = classificacao
-
-        return message.DEFAULT_MESSAGE // Status code 201
+        classificacao.id = Number(result)
+        return await montarMensagem(message, message.SUCESS_CREATED_ITEM, classificacao)
 
     } catch (error) {}
     return message.ERROR_INTERNAL_SERVER_CONTROLLER
@@ -42,17 +37,12 @@ const atualizarClassificacao = async (classificacao, id, contentType) => {
         let resultBuscarId = await buscarClassificacao(id)
         if(!resultBuscarId.status) return resultBuscarId // 400 e 404
 
-        classificacao.id = id
+        classificacao.id = Number(id)
         let result = await classificacaoDAO.updateClassificacao(classificacao)
 
         if(!result) return message.ERROR_INTERNAL_SERVER_MODEL // 500
 
-        message.DEFAULT_MESSAGE.status = message.SUCESS_UPDATE_ITEM.status
-        message.DEFAULT_MESSAGE.status_code = message.SUCESS_UPDATE_ITEM.status_code
-        message.DEFAULT_MESSAGE.message = message.SUCESS_UPDATE_ITEM.message
-        message.DEFAULT_MESSAGE.response = classificacao
-        
-        return message.DEFAULT_MESSAGE // Status code 200
+        return await montarMensagem(message, message.SUCESS_UPDATE_ITEM, classificacao)
 
     } catch (error) {}
     return message.ERROR_INTERNAL_SERVER_CONTROLLER // 500
@@ -96,11 +86,7 @@ const buscarClassificacao = async (id) => {
 
         if(result.length <= 0) return config_message.ERROR_NOT_FOUND
 
-        message.DEFAULT_MESSAGE.status = message.SUCESS_RESPONSE.status
-        message.DEFAULT_MESSAGE.status_code = message.SUCESS_RESPONSE.status_code
-        message.DEFAULT_MESSAGE.response = result
-        
-        return message.DEFAULT_MESSAGE // Status code 200
+        return await montarMensagem(message, message.SUCESS_RESPONSE, result)
 
     } catch (error) {console.log(error)}
     return message.ERROR_INTERNAL_SERVER_CONTROLLER // 500
@@ -119,11 +105,7 @@ const excluirClassificacao = async (id) => {
 
         if(!result) return message.ERROR_INTERNAL_SERVER_MODEL // 500
 
-        message.DEFAULT_MESSAGE.status = message.SUCESS_DELETE_ITEM.status
-        message.DEFAULT_MESSAGE.status_code = message.SUCESS_DELETE_ITEM.status_code
-        message.DEFAULT_MESSAGE.message = message.SUCESS_DELETE_ITEM.message
-        
-        return message.DEFAULT_MESSAGE // Status code 200
+        return await montarMensagem(message, message.SUCESS_DELETE_ITEM)
 
     } catch (error) {}
     return message.ERROR_INTERNAL_SERVER_CONTROLLER // 500
@@ -140,12 +122,12 @@ const validarDados = async (classificacao, contentType) => {
         return message.ERROR_BAD_REQUEST // 400
     }
 
-    if(classificacao.classificacao == undefined || classificacao.classificacao == null || classificacao.classificacao == '' || classificacao.classificacao.length > 80 || !isNaN(classificacao.classificacao)){
+    if(classificacao.classificacao == undefined || classificacao.classificacao == null || classificacao.classificacao == '' || classificacao.classificacao.length > 80 || typeof(classificacao.classificacao) != 'string'){
         message.ERROR_BAD_REQUEST.field = '[CLASSIFICAÇÃO] INVÁLIDO'
         return message.ERROR_BAD_REQUEST // 400
     }
 
-    if(classificacao.descricao == undefined || classificacao.descricao == null || classificacao.descricao == '' || classificacao.descricao.length > 250 || !isNaN(classificacao.descricao)){
+    if(classificacao.descricao == undefined || classificacao.descricao == null || classificacao.descricao == '' || classificacao.descricao.length > 250 || typeof(classificacao.classificacao) != 'string'){
         message.ERROR_BAD_REQUEST.field = '[CLASSIFICAÇÃO] INVÁLIDO'
         return message.ERROR_BAD_REQUEST // 400
     }
@@ -162,6 +144,16 @@ const validarId = async (id) => {
     }
 
     return false
+}
+
+const montarMensagem = async (base,status,response = null) => {
+    base.DEFAULT_MESSAGE.status = status.status
+    base.DEFAULT_MESSAGE.status_code = status.status_code
+    base.DEFAULT_MESSAGE.message = status.message
+
+    if(response != null) base.DEFAULT_MESSAGE.response = response
+
+    return base.DEFAULT_MESSAGE // 200 ou 201
 }
 
 module.exports = {

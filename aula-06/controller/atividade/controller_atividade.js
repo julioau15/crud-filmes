@@ -20,12 +20,7 @@ const inserirNovaAtividade = async (atividade, contentType) => {
         if(!result) return message.ERROR_INTERNAL_SERVER_MODEL
 
         atividade.id = result
-        message.DEFAULT_MESSAGE.status = message.SUCESS_CREATED_ITEM.status
-        message.DEFAULT_MESSAGE.status_code = message.SUCESS_CREATED_ITEM.status_code
-        message.DEFAULT_MESSAGE.message = message.SUCESS_CREATED_ITEM.message
-        message.DEFAULT_MESSAGE.response = atividade
-
-        return message.DEFAULT_MESSAGE // Status code 201
+        return await montarMensagem(message, message.SUCESS_CREATED_ITEM, atividade)
 
     } catch (error) {}
     return message.ERROR_INTERNAL_SERVER_CONTROLLER
@@ -39,20 +34,15 @@ const atualizarAtividade = async (atividade, id, contentType) => {
         let validar = await validarDados(atividade, contentType)
         if(validar) return validar // 400 ou 415
 
-        const validarID = await validarId(id)
-        if(validarID) return validarID
+        let resultBuscarId = await buscarAtividade(id)
+        if(!resultBuscarId.status) return resultBuscarId // 400 e 404
 
-        atividade.id = id
+        atividade.id = Number(id)
         let result = await atividadeDAO.updateAtividade(atividade)
 
         if(!result) return message.ERROR_INTERNAL_SERVER_MODEL // 500
 
-        message.DEFAULT_MESSAGE.status = message.SUCESS_UPDATE_ITEM.status
-        message.DEFAULT_MESSAGE.status_code = message.SUCESS_UPDATE_ITEM.status_code
-        message.DEFAULT_MESSAGE.message = message.SUCESS_UPDATE_ITEM.message
-        message.DEFAULT_MESSAGE.response = atividade
-        
-        return message.DEFAULT_MESSAGE // Status code 200
+        return await montarMensagem(message, message.SUCESS_UPDATE_ITEM, atividade)
 
     } catch (error) {}
     return message.ERROR_INTERNAL_SERVER_CONTROLLER // 500
@@ -96,11 +86,7 @@ const buscarAtividade = async (id) => {
 
         if(result.length <= 0) return config_message.ERROR_NOT_FOUND
 
-        message.DEFAULT_MESSAGE.status = message.SUCESS_RESPONSE.status
-        message.DEFAULT_MESSAGE.status_code = message.SUCESS_RESPONSE.status_code
-        message.DEFAULT_MESSAGE.response = result
-        
-        return message.DEFAULT_MESSAGE // Status code 200
+        return await montarMensagem(message, message.SUCESS_RESPONSE, result)
 
     } catch (error) {}
     return message.ERROR_INTERNAL_SERVER_CONTROLLER // 500
@@ -119,11 +105,7 @@ const excluirAtividade = async (id) => {
 
         if(!result) return message.ERROR_INTERNAL_SERVER_MODEL // 500
 
-        message.DEFAULT_MESSAGE.status = message.SUCESS_DELETE_ITEM.status
-        message.DEFAULT_MESSAGE.status_code = message.SUCESS_DELETE_ITEM.status_code
-        message.DEFAULT_MESSAGE.message = message.SUCESS_DELETE_ITEM.message
-        
-        return message.DEFAULT_MESSAGE // Status code 200
+        return await montarMensagem(message, message.SUCESS_DELETE_ITEM)
 
     } catch (error) {}
     return message.ERROR_INTERNAL_SERVER_CONTROLLER // 500
@@ -135,7 +117,7 @@ const validarDados = async (atividade, contentType) => {
     // Valida se o formato de dados é JSON
     if(String(contentType).toLowerCase() != 'application/json') return message.ERROR_CONTENT_TYPE // Status code 415
 
-    if(atividade.nome == undefined || atividade.nome == null || atividade.nome == '' || atividade.nome.length > 100 || !isNaN(atividade.nome)){
+    if(atividade.nome == undefined || atividade.nome == null || atividade.nome == '' || atividade.nome.length > 100 || typeof(atividade.nome) != 'string'){
         message.ERROR_BAD_REQUEST.field = '[NOME] INVÁLIDO'
         return message.ERROR_BAD_REQUEST // 400
     }
@@ -153,6 +135,17 @@ const validarId = async (id) => {
 
     return false
 }
+
+const montarMensagem = async (base,status,response = null) => {
+    base.DEFAULT_MESSAGE.status = status.status
+    base.DEFAULT_MESSAGE.status_code = status.status_code
+    base.DEFAULT_MESSAGE.message = status.message
+
+    if(response != null) base.DEFAULT_MESSAGE.response = response
+
+    return base.DEFAULT_MESSAGE // 200 ou 201
+}
+
 
 module.exports = {
     inserirNovaAtividade,
