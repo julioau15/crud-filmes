@@ -53,6 +53,13 @@ const {
     buscarAtor,
     excluirAtor
 } = require('./controller/ator/controller_ator.js')
+const { 
+    inserirNovoDiretor,
+    atualizarDiretor,
+    listarDiretor,
+    buscarDiretor,
+    excluirDiretor
+} = require('./controller/diretor/controller_diretor.js')
 
 // Criando um objeto para manipular o EXPRESS
 const app = express()
@@ -117,6 +124,8 @@ const DOC_API = {
 app.get('/help', (req,res) => {
     res.status(200).json(DOC_API)
 })
+
+// ---------------- Filme -----------------
 
 // endpoint para inserir filme
 app.post('/v1/senai/locadora/filme',bodyParserJSON, async (req,res) => {
@@ -365,6 +374,48 @@ app.put('/v1/senai/locadora/ator/:id', bodyParserJSON, async (req,res) => {
 app.delete('/v1/senai/locadora/ator/:id', async (req,res) => {
     let id = req.params.id
     let result = await excluirAtor(id)
+    res.status(result.status_code).json(result)
+})
+
+// ---------------- Diretor -----------------
+
+// endpoint para inserir diretor
+app.post('/v1/senai/locadora/diretor',bodyParserJSON, async (req,res) => {
+    // recebe o conteudo dentro do body da requisição
+    let dados = req.body
+    let contentType = req.headers['content-type']
+
+    let result = await inserirNovoDiretor(dados,contentType)
+    res.status(result.status_code).json(result)
+})
+
+// endpoint para retornar todas diretors
+app.get('/v1/senai/locadora/diretor', async (req,res) => {
+    let result = await listarDiretor()
+    res.status(result.status_code).json(result)
+})
+
+// endpoint para buscar um diretor pelo id
+app.get('/v1/senai/locadora/diretor/:id', async (req,res) => {
+    let id = req.params.id
+    let result = await buscarDiretor(id)
+    res.status(result.status_code).json(result)
+})
+
+// endpoint para atualizar uma diretor pelo id
+app.put('/v1/senai/locadora/diretor/:id', bodyParserJSON, async (req,res) => {
+    let id          = req.params.id                 // Recebe o id por parametro
+    let dados       = req.body                      // Recebe os dados do body da requisição
+    let contentType = req.headers['content-type']   // Recebe o ContentType do header da requisição
+    
+    let result      = await atualizarDiretor(dados, id, contentType)
+    res.status(result.status_code).json(result)
+})
+
+// endpoint para deletar uma diretor pelo id
+app.delete('/v1/senai/locadora/diretor/:id', async (req,res) => {
+    let id = req.params.id
+    let result = await excluirDiretor(id)
     res.status(result.status_code).json(result)
 })
 
