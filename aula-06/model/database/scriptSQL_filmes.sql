@@ -5,8 +5,6 @@ CREATE DATABASE IF NOT EXISTS db_filmes_20261_a;
 # Ativa o database de filmes
 USE db_filmes_20261_a;
 
-DROP TABLE IF EXISTS tbl_filme;
-
 -- Cria tabela tbl_filme
 CREATE TABLE IF NOT EXISTS tbl_filme (
   id int NOT NULL AUTO_INCREMENT,
