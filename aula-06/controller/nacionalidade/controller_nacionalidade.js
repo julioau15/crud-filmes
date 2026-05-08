@@ -1,29 +1,29 @@
 /*********************************************************************************************************
- * Objetivo: Arquivo responsável pela validação, tratamento e manipulação de dados para o CRUD de atividade
+ * Objetivo: Arquivo responsável pela validação, tratamento e manipulação de dados para o CRUD de nacionalidade
  * Data: 06/05/2026
  * Autor: Julio Augusto
  * Versão: 1.0.5.26
  * *******************************************************************************************************/
 
 const config_message = require('../module/configMessages.js')
-const atividadeDAO = require('../../model/DAO/atividade/atividade.js')
+const nacionalidadeDAO = require('../../model/DAO/nacionalidade/nacionalidade.js')
 
-// inserir nova atividade
-const inserirNovaAtividade = async (atividade, contentType) => {
+// inserir nova nacionalidade
+const inserirNovaNacionalidade = async (nacionalidade, contentType) => {
     let message = JSON.parse(JSON.stringify(config_message))
     try {
-        let validar = await validarDados(atividade, contentType)
+        let validar = await validarDados(nacionalidade, contentType)
         if(validar) return validar // 400 ou 415
 
-        let result = await atividadeDAO.insertAtividade(atividade)
+        let result = await nacionalidadeDAO.insertNacionalidade(nacionalidade)
 
         if(!result) return message.ERROR_INTERNAL_SERVER_MODEL
 
-        atividade.id = result
+        nacionalidade.id = result
         message.DEFAULT_MESSAGE.status = message.SUCESS_CREATED_ITEM.status
         message.DEFAULT_MESSAGE.status_code = message.SUCESS_CREATED_ITEM.status_code
         message.DEFAULT_MESSAGE.message = message.SUCESS_CREATED_ITEM.message
-        message.DEFAULT_MESSAGE.response = atividade
+        message.DEFAULT_MESSAGE.response = nacionalidade
 
         return message.DEFAULT_MESSAGE // Status code 201
 
@@ -31,26 +31,23 @@ const inserirNovaAtividade = async (atividade, contentType) => {
     return message.ERROR_INTERNAL_SERVER_CONTROLLER
 }
 
-// atualizar atividade
-const atualizarAtividade = async (atividade, id, contentType) => {
+// atualizar nacionalidade
+const atualizarNacionalidade = async (nacionalidade, id, contentType) => {
     let message = JSON.parse(JSON.stringify(config_message))
 
     try {
-        let validar = await validarDados(atividade, contentType)
-        if(validar) return validar // 400 ou 415
+        let resultBuscarId = await buscarNacionalidade(id)
+        if(!resultBuscarId.status) return resultBuscarId // 400 e 404
 
-        const validarID = await validarId(id)
-        if(validarID) return validarID
-
-        atividade.id = id
-        let result = await atividadeDAO.updateAtividade(atividade)
+        nacionalidade.id = id
+        let result = await nacionalidadeDAO.updateNacionalidade(nacionalidade)
 
         if(!result) return message.ERROR_INTERNAL_SERVER_MODEL // 500
 
         message.DEFAULT_MESSAGE.status = message.SUCESS_UPDATE_ITEM.status
         message.DEFAULT_MESSAGE.status_code = message.SUCESS_UPDATE_ITEM.status_code
         message.DEFAULT_MESSAGE.message = message.SUCESS_UPDATE_ITEM.message
-        message.DEFAULT_MESSAGE.response = atividade
+        message.DEFAULT_MESSAGE.response = nacionalidade
         
         return message.DEFAULT_MESSAGE // Status code 200
 
@@ -58,12 +55,12 @@ const atualizarAtividade = async (atividade, id, contentType) => {
     return message.ERROR_INTERNAL_SERVER_CONTROLLER // 500
 }
 
-// listar todas atividades
-const listarAtividade = async () => {
+// listar todas nacionalidades
+const listarNacionalidade = async () => {
     let message = JSON.parse(JSON.stringify(config_message))
 
     try {
-        let result = await atividadeDAO.selectAllAtividade()
+        let result = await nacionalidadeDAO.selectAllNacionalidade()
 
         if(!result) return message.ERROR_INTERNAL_SERVER_MODEL // 500
 
@@ -73,7 +70,7 @@ const listarAtividade = async () => {
         message.DEFAULT_MESSAGE.status = message.SUCESS_RESPONSE.status
         message.DEFAULT_MESSAGE.status_code = message.SUCESS_RESPONSE.status_code
         message.DEFAULT_MESSAGE.response.count = result.length
-        message.DEFAULT_MESSAGE.response.atividade = result
+        message.DEFAULT_MESSAGE.response.nacionalidade = result
 
         return message.DEFAULT_MESSAGE // status_code 200
 
@@ -81,8 +78,8 @@ const listarAtividade = async () => {
     return message.ERROR_INTERNAL_SERVER_CONTROLLER // 500
 }
 
-// buscar atividade pelo id
-const buscarAtividade = async (id) => {
+// buscar nacionalidade pelo id
+const buscarNacionalidade = async (id) => {
     let message = JSON.parse(JSON.stringify(config_message))
 
     try {
@@ -90,7 +87,7 @@ const buscarAtividade = async (id) => {
        const validarID = await validarId(id)
        if(validarID) return validarID
 
-        let result = await atividadeDAO.selectByIdAtividade(id)
+        let result = await nacionalidadeDAO.selectByIdNacionalidade(id)
 
         if(!result) return message.ERROR_INTERNAL_SERVER_MODEL // 500
 
@@ -102,20 +99,20 @@ const buscarAtividade = async (id) => {
         
         return message.DEFAULT_MESSAGE // Status code 200
 
-    } catch (error) {}
+    } catch (error) {console.log(error)}
     return message.ERROR_INTERNAL_SERVER_CONTROLLER // 500
 }
 
-// excluir atividade pelo id
-const excluirAtividade = async (id) => {
+// excluir nacionalidade pelo id
+const excluirNacionalidade = async (id) => {
     let message = JSON.parse(JSON.stringify(config_message))
 
     try {
 
-        let resultBuscarId = await buscarAtividade(id)
+        let resultBuscarId = await buscarNacionalidade(id)
         if(!resultBuscarId.status) return resultBuscarId // 400 e 404
 
-        let result = await atividadeDAO.deleteAtividade(id)
+        let result = await nacionalidadeDAO.deleteNacionalidade(id)
 
         if(!result) return message.ERROR_INTERNAL_SERVER_MODEL // 500
 
@@ -129,14 +126,19 @@ const excluirAtividade = async (id) => {
     return message.ERROR_INTERNAL_SERVER_CONTROLLER // 500
 }
 
-const validarDados = async (atividade, contentType) => {
+const validarDados = async (nacionalidade, contentType) => {
     let message = JSON.parse(JSON.stringify(config_message))
 
     // Valida se o formato de dados é JSON
     if(String(contentType).toLowerCase() != 'application/json') return message.ERROR_CONTENT_TYPE // Status code 415
 
-    if(atividade.nome == undefined || atividade.nome == null || atividade.nome == '' || atividade.nome.length > 100){
-        message.ERROR_BAD_REQUEST.field = '[NOME] INVÁLIDO'
+    if(nacionalidade.pais == undefined || nacionalidade.pais == null || nacionalidade.pais == '' || nacionalidade.pais.length > 100){
+        message.ERROR_BAD_REQUEST.field = '[PAÍS] INVÁLIDO'
+        return message.ERROR_BAD_REQUEST // 400
+    }
+
+    if(nacionalidade.sigla.length > 5){
+        message.ERROR_BAD_REQUEST.field = '[SIGLA] INVÁLIDO'
         return message.ERROR_BAD_REQUEST // 400
     }
 
@@ -145,8 +147,8 @@ const validarDados = async (atividade, contentType) => {
 
 const validarId = async (id) => {
     let message = JSON.parse(JSON.stringify(config_message))
-    
-    if(id == undefined || id == '' || id == null || id <= 0 || isNaN(id)){
+
+    if(id == undefined || id == '' || id == null || id <= 0 || isNaN(String(id))){
         message.ERROR_BAD_REQUEST.field = '[ID] INVÁLIDO'
         return message.ERROR_BAD_REQUEST // 400
     }
@@ -155,9 +157,9 @@ const validarId = async (id) => {
 }
 
 module.exports = {
-    inserirNovaAtividade,
-    atualizarAtividade,
-    listarAtividade,
-    buscarAtividade,
-    excluirAtividade
+    inserirNovaNacionalidade,
+    atualizarNacionalidade,
+    listarNacionalidade,
+    buscarNacionalidade,
+    excluirNacionalidade
 }
