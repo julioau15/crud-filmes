@@ -185,7 +185,7 @@ const validarDados = async (genero) => {
     let message = JSON.parse(JSON.stringify(config_message))
 
     // Validação de dados para os atributos do genero (Status 400)
-    if(genero.genero == undefined || genero.genero == null || genero.genero == '' || genero.genero.length > 80){
+    if(genero.genero == undefined || genero.genero == null || genero.genero == '' || genero.genero.length > 80 || !isNaN(genero.genero)){
         message.ERROR_BAD_REQUEST.field = '[NOME] INVÁLIDO'
         return message.ERROR_BAD_REQUEST
     }

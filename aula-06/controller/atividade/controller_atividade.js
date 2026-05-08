@@ -135,7 +135,7 @@ const validarDados = async (atividade, contentType) => {
     // Valida se o formato de dados é JSON
     if(String(contentType).toLowerCase() != 'application/json') return message.ERROR_CONTENT_TYPE // Status code 415
 
-    if(atividade.nome == undefined || atividade.nome == null || atividade.nome == '' || atividade.nome.length > 100){
+    if(atividade.nome == undefined || atividade.nome == null || atividade.nome == '' || atividade.nome.length > 100 || !isNaN(atividade.nome)){
         message.ERROR_BAD_REQUEST.field = '[NOME] INVÁLIDO'
         return message.ERROR_BAD_REQUEST // 400
     }

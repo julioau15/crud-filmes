@@ -39,6 +39,13 @@ const {
     buscarNacionalidade,
     excluirNacionalidade
 } = require('./controller/nacionalidade/controller_nacionalidade.js')
+const { 
+    inserirNovaClassificacao,
+    atualizarClassificacao,
+    listarClassificacao,
+    buscarClassificacao,
+    excluirClassificacao
+} = require('./controller/classificacao/controller_classificacao.js')
 
 // Criando um objeto para manipular o EXPRESS
 const app = express()
@@ -269,6 +276,49 @@ app.delete('/v1/senai/locadora/nacionalidade/:id', async (req,res) => {
     let result = await excluirNacionalidade(id)
     res.status(result.status_code).json(result)
 })
+
+// ---------------- Classificação -----------------
+
+// endpoint para inserir classificacao
+app.post('/v1/senai/locadora/classificacao',bodyParserJSON, async (req,res) => {
+    // recebe o conteudo dentro do body da requisição
+    let dados = req.body
+    let contentType = req.headers['content-type']
+
+    let result = await inserirNovaClassificacao(dados,contentType)
+    res.status(result.status_code).json(result)
+})
+
+// endpoint para retornar todas classificacaos
+app.get('/v1/senai/locadora/classificacao', async (req,res) => {
+    let result = await listarClassificacao()
+    res.status(result.status_code).json(result)
+})
+
+// endpoint para buscar um classificacao pelo id
+app.get('/v1/senai/locadora/classificacao/:id', async (req,res) => {
+    let id = req.params.id
+    let result = await buscarClassificacao(id)
+    res.status(result.status_code).json(result)
+})
+
+// endpoint para atualizar uma classificacao pelo id
+app.put('/v1/senai/locadora/classificacao/:id', bodyParserJSON, async (req,res) => {
+    let id          = req.params.id                 // Recebe o id por parametro
+    let dados       = req.body                      // Recebe os dados do body da requisição
+    let contentType = req.headers['content-type']   // Recebe o ContentType do header da requisição
+    
+    let result      = await atualizarClassificacao(dados, id, contentType)
+    res.status(result.status_code).json(result)
+})
+
+// endpoint para deletar uma classificacao pelo id
+app.delete('/v1/senai/locadora/classificacao/:id', async (req,res) => {
+    let id = req.params.id
+    let result = await excluirClassificacao(id)
+    res.status(result.status_code).json(result)
+})
+
 
 // Serve para inicializar a API para receber requisições
 app.listen(port, () => {

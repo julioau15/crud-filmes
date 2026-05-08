@@ -1,29 +1,29 @@
 /*********************************************************************************************************
- * Objetivo: Arquivo responsável pela validação, tratamento e manipulação de dados para o CRUD de nacionalidade
+ * Objetivo: Arquivo responsável pela validação, tratamento e manipulação de dados para o CRUD de classificacao
  * Data: 06/05/2026
  * Autor: Julio Augusto
  * Versão: 1.0.5.26
  * *******************************************************************************************************/
 
 const config_message = require('../module/configMessages.js')
-const nacionalidadeDAO = require('../../model/DAO/nacionalidade/nacionalidade.js')
+const classificacaoDAO = require('../../model/DAO/classificacao/classificacao.js')
 
-// inserir nova nacionalidade
-const inserirNovaNacionalidade = async (nacionalidade, contentType) => {
+// inserir nova classificacao
+const inserirNovaClassificacao = async (classificacao, contentType) => {
     let message = JSON.parse(JSON.stringify(config_message))
     try {
-        let validar = await validarDados(nacionalidade, contentType)
+        let validar = await validarDados(classificacao, contentType)
         if(validar) return validar // 400 ou 415
 
-        let result = await nacionalidadeDAO.insertNacionalidade(nacionalidade)
+        let result = await classificacaoDAO.insertClassificacao(classificacao)
 
         if(!result) return message.ERROR_INTERNAL_SERVER_MODEL
 
-        nacionalidade.id = result
+        classificacao.id = result
         message.DEFAULT_MESSAGE.status = message.SUCESS_CREATED_ITEM.status
         message.DEFAULT_MESSAGE.status_code = message.SUCESS_CREATED_ITEM.status_code
         message.DEFAULT_MESSAGE.message = message.SUCESS_CREATED_ITEM.message
-        message.DEFAULT_MESSAGE.response = nacionalidade
+        message.DEFAULT_MESSAGE.response = classificacao
 
         return message.DEFAULT_MESSAGE // Status code 201
 
@@ -31,26 +31,26 @@ const inserirNovaNacionalidade = async (nacionalidade, contentType) => {
     return message.ERROR_INTERNAL_SERVER_CONTROLLER
 }
 
-// atualizar nacionalidade
-const atualizarNacionalidade = async (nacionalidade, id, contentType) => {
+// atualizar classificacao
+const atualizarClassificacao = async (classificacao, id, contentType) => {
     let message = JSON.parse(JSON.stringify(config_message))
 
     try {
-        let validar = await validarDados(nacionalidade, contentType)
+        let validar = await validarDados(classificacao, contentType)
         if(validar) return validar
 
-        let resultBuscarId = await buscarNacionalidade(id)
+        let resultBuscarId = await buscarClassificacao(id)
         if(!resultBuscarId.status) return resultBuscarId // 400 e 404
 
-        nacionalidade.id = id
-        let result = await nacionalidadeDAO.updateNacionalidade(nacionalidade)
+        classificacao.id = id
+        let result = await classificacaoDAO.updateClassificacao(classificacao)
 
         if(!result) return message.ERROR_INTERNAL_SERVER_MODEL // 500
 
         message.DEFAULT_MESSAGE.status = message.SUCESS_UPDATE_ITEM.status
         message.DEFAULT_MESSAGE.status_code = message.SUCESS_UPDATE_ITEM.status_code
         message.DEFAULT_MESSAGE.message = message.SUCESS_UPDATE_ITEM.message
-        message.DEFAULT_MESSAGE.response = nacionalidade
+        message.DEFAULT_MESSAGE.response = classificacao
         
         return message.DEFAULT_MESSAGE // Status code 200
 
@@ -58,12 +58,12 @@ const atualizarNacionalidade = async (nacionalidade, id, contentType) => {
     return message.ERROR_INTERNAL_SERVER_CONTROLLER // 500
 }
 
-// listar todas nacionalidades
-const listarNacionalidade = async () => {
+// listar todas classificacaos
+const listarClassificacao = async () => {
     let message = JSON.parse(JSON.stringify(config_message))
 
     try {
-        let result = await nacionalidadeDAO.selectAllNacionalidade()
+        let result = await classificacaoDAO.selectAllClassificacao()
 
         if(!result) return message.ERROR_INTERNAL_SERVER_MODEL // 500
 
@@ -73,7 +73,7 @@ const listarNacionalidade = async () => {
         message.DEFAULT_MESSAGE.status = message.SUCESS_RESPONSE.status
         message.DEFAULT_MESSAGE.status_code = message.SUCESS_RESPONSE.status_code
         message.DEFAULT_MESSAGE.response.count = result.length
-        message.DEFAULT_MESSAGE.response.nacionalidade = result
+        message.DEFAULT_MESSAGE.response.classificacao = result
 
         return message.DEFAULT_MESSAGE // status_code 200
 
@@ -81,8 +81,8 @@ const listarNacionalidade = async () => {
     return message.ERROR_INTERNAL_SERVER_CONTROLLER // 500
 }
 
-// buscar nacionalidade pelo id
-const buscarNacionalidade = async (id) => {
+// buscar classificacao pelo id
+const buscarClassificacao = async (id) => {
     let message = JSON.parse(JSON.stringify(config_message))
 
     try {
@@ -90,7 +90,7 @@ const buscarNacionalidade = async (id) => {
        const validarID = await validarId(id)
        if(validarID) return validarID
 
-        let result = await nacionalidadeDAO.selectByIdNacionalidade(id)
+        let result = await classificacaoDAO.selectByIdClassificacao(id)
 
         if(!result) return message.ERROR_INTERNAL_SERVER_MODEL // 500
 
@@ -106,16 +106,16 @@ const buscarNacionalidade = async (id) => {
     return message.ERROR_INTERNAL_SERVER_CONTROLLER // 500
 }
 
-// excluir nacionalidade pelo id
-const excluirNacionalidade = async (id) => {
+// excluir classificacao pelo id
+const excluirClassificacao = async (id) => {
     let message = JSON.parse(JSON.stringify(config_message))
 
     try {
 
-        let resultBuscarId = await buscarNacionalidade(id)
+        let resultBuscarId = await buscarClassificacao(id)
         if(!resultBuscarId.status) return resultBuscarId // 400 e 404
 
-        let result = await nacionalidadeDAO.deleteNacionalidade(id)
+        let result = await classificacaoDAO.deleteClassificacao(id)
 
         if(!result) return message.ERROR_INTERNAL_SERVER_MODEL // 500
 
@@ -129,19 +129,24 @@ const excluirNacionalidade = async (id) => {
     return message.ERROR_INTERNAL_SERVER_CONTROLLER // 500
 }
 
-const validarDados = async (nacionalidade, contentType) => {
+const validarDados = async (classificacao, contentType) => {
     let message = JSON.parse(JSON.stringify(config_message))
 
     // Valida se o formato de dados é JSON
     if(String(contentType).toLowerCase() != 'application/json') return message.ERROR_CONTENT_TYPE // Status code 415
 
-    if(nacionalidade.pais == undefined || nacionalidade.pais == null || nacionalidade.pais == '' || nacionalidade.pais.length > 100 || !isNaN(nacionalidade.pais)){
-        message.ERROR_BAD_REQUEST.field = '[PAÍS] INVÁLIDO'
+    if(classificacao.idade == undefined || classificacao.idade == null || classificacao.idade == '' || isNaN(classificacao.idade)){
+        message.ERROR_BAD_REQUEST.field = '[IDADE] INVÁLIDO'
         return message.ERROR_BAD_REQUEST // 400
     }
 
-    if(nacionalidade.sigla.length > 5){
-        message.ERROR_BAD_REQUEST.field = '[SIGLA] INVÁLIDO'
+    if(classificacao.classificacao == undefined || classificacao.classificacao == null || classificacao.classificacao == '' || classificacao.classificacao.length > 80 || !isNaN(classificacao.classificacao)){
+        message.ERROR_BAD_REQUEST.field = '[CLASSIFICAÇÃO] INVÁLIDO'
+        return message.ERROR_BAD_REQUEST // 400
+    }
+
+    if(classificacao.descricao == undefined || classificacao.descricao == null || classificacao.descricao == '' || classificacao.descricao.length > 250 || !isNaN(classificacao.descricao)){
+        message.ERROR_BAD_REQUEST.field = '[CLASSIFICAÇÃO] INVÁLIDO'
         return message.ERROR_BAD_REQUEST // 400
     }
 
@@ -160,9 +165,9 @@ const validarId = async (id) => {
 }
 
 module.exports = {
-    inserirNovaNacionalidade,
-    atualizarNacionalidade,
-    listarNacionalidade,
-    buscarNacionalidade,
-    excluirNacionalidade
+    inserirNovaClassificacao,
+    atualizarClassificacao,
+    listarClassificacao,
+    buscarClassificacao,
+    excluirClassificacao
 }
