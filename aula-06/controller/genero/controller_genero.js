@@ -111,9 +111,10 @@ const excluirGenero = async (id) => {
 
 // Função para validar todos os dados de genero (Obrigatórios, Quantidade de caracteres, etc)
 const validarDados = async (genero, contentType) => {
-     // Valida se o formato de dados é JSON
-    if(String(contentType).toLowerCase() != 'application/json') return message.ERROR_CONTENT_TYPE // Status code 415
     let message = JSON.parse(JSON.stringify(config_message))
+
+    // Valida se o formato de dados é JSON
+    if(String(contentType).toLowerCase() != 'application/json') return message.ERROR_CONTENT_TYPE // Status code 415
 
     // Validação de dados para os atributos do genero (Status 400)
     if(genero.genero == undefined || genero.genero == null || genero.genero == '' || genero.genero.length > 80 || typeof(genero.genero) != 'string'){
