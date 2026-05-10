@@ -13,38 +13,22 @@ const generoDAO = require('../../model/DAO/genero/genero.js')
 
 // Função para inserir um novo genero
 const inserirNovoGenero = async (genero, contentType) => {
-    /* Criando um clone do objeto JSON para manipular sua 
-     * estrutura local sem modificar a estrutura original */
     let message = JSON.parse(JSON.stringify(config_message))
 
     try {
         // valida dados obrigatórios
-        let validar = await validarDados(genero)
-        if(validar)
-            return validar
-
-        // Valida se o formato de dados é JSON
-        if(String(contentType).toLowerCase() != 'application/json')
-            return message.ERROR_CONTENT_TYPE // Status code 415
+        let validar = await validarDados(genero, contentType)
+        if(validar) return validar // 400 e 415
         
         // tenta inserir no banco
         let result = await generoDAO.insertGenero(genero)
-                
-        if(result){
-            genero.id = result
-            message.DEFAULT_MESSAGE.status = message.SUCESS_CREATED_ITEM.status
-            message.DEFAULT_MESSAGE.status_code = message.SUCESS_CREATED_ITEM.status_code
-            message.DEFAULT_MESSAGE.message = message.SUCESS_CREATED_ITEM.message
-            message.DEFAULT_MESSAGE.response = genero
-            return message.DEFAULT_MESSAGE // Status code 201
-        }
+        if(!result) return message.ERROR_INTERNAL_SERVER_MODEL // Status code 500
+        
+        genero.id = Number(result)
+        return await montarMensagem(message, message.SUCESS_CREATED_ITEM, genero)
 
-        return message.ERROR_INTERNAL_SERVER_MODEL // Status code 500
-
-    } catch (error) {
-        console.log(error)
-        return message.ERROR_INTERNAL_SERVER_CONTROLLER // Status code 500  
-    }
+    } catch (error) {console.log(error)}
+    return message.ERROR_INTERNAL_SERVER_CONTROLLER // Status code 500 
 }
 
 // Função para atualizar um genero
@@ -52,42 +36,22 @@ const atualizarGenero = async (genero, id, contentType) => {
     let message = JSON.parse(JSON.stringify(config_message))
 
     try {
-        // Valida se o formato de dados é JSON
-        if(String(contentType).toLowerCase() != 'application/json')
-            return message.ERROR_CONTENT_TYPE // Status code 415
-
         let resultBuscarID = await buscarGenero(id)
-
-        // Valida se é possivel encontrar o genero
-            // Se o status for true, o genero foi encontrado
-            // Se for false, o genero não foi encontrado ou houve um erro de processamento
-        if(!resultBuscarID.status)
-            return resultBuscarID // Status code 400 ou 404 ou 500
+        if(!resultBuscarID.status) return resultBuscarID // Status code 400 ou 404 ou 500
 
         // valida dados obrigatórios
-        let validar = await validarDados(genero)
-        if(validar)
-            return validar
-        
-        // adiciona atributo 'id' do genero no JSON para ser enviado no DAO
-        genero.id = id
+        let validar = await validarDados(genero, contentType)
+        if(validar) return validar  // 400 e 415
+    
+        genero.id = Number(id)
         let result = await generoDAO.updateGenero(genero) // Tenta update no banco
+
+        if(!result) return message.ERROR_INTERNAL_SERVER_MODEL // Status code 500
         
-        // retorno sucesso
-        if(result){
-            message.DEFAULT_MESSAGE.status = message.SUCESS_UPDATE_ITEM.status
-            message.DEFAULT_MESSAGE.status_code = message.SUCESS_UPDATE_ITEM.status_code
-            message.DEFAULT_MESSAGE.message = message.SUCESS_UPDATE_ITEM.message
-            message.DEFAULT_MESSAGE.response = genero
-            return message.DEFAULT_MESSAGE // Status code 200
-        }
-
-        // Erro na model
-        return message.ERROR_INTERNAL_SERVER_MODEL // Status code 500
-
-    } catch (error) {
-        return message.ERROR_INTERNAL_SERVER_CONTROLLER // Status code 500  
-    }
+        return await montarMensagem(message, message.SUCESS_UPDATE_ITEM, genero) // 200
+        
+    } catch (error) {console.log(error)}
+    return message.ERROR_INTERNAL_SERVER_CONTROLLER // Status code 500  
 }
 
 // Função para retornar Todos generos
@@ -97,57 +61,35 @@ const listarGenero = async () => {
         // executa a função para retornar todos os generos
         let result = await generoDAO.selectAllGenero()
 
-        if(result){
-            // verfica se o array é vazio
-            if(result.length > 0){
-                message.DEFAULT_MESSAGE.status = message.SUCESS_RESPONSE.status
-                message.DEFAULT_MESSAGE.status_code = message.SUCESS_RESPONSE.status_code
-                message.DEFAULT_MESSAGE.response.count = result.length
-                message.DEFAULT_MESSAGE.response.genero = result
-                return message.DEFAULT_MESSAGE // status_code 200
-            }
+        if(!result) return message.ERROR_INTERNAL_SERVER_MODEL // status_code 500
 
-            return message.ERROR_NOT_FOUND // status_code 404
+        if(result.length < 1) return message.ERROR_NOT_FOUND // status_code 404
 
-        } else
-            return message.ERROR_INTERNAL_SERVER_MODEL // status_code 500
-
-    } catch (error) {
-        return message.ERROR_INTERNAL_SERVER_CONTROLLER // status_code 500
-    }
-    
+        let listarGeneroMessage = await montarMensagem(message, message.SUCESS_RESPONSE, result)
+        listarGeneroMessage.response.count = result.length
+        
+        return listarGeneroMessage // status_code 200
+            
+    } catch (error) {console.log(error)}
+    return message.ERROR_INTERNAL_SERVER_CONTROLLER // status_code 500
 }
 
 // Função para buscar um genero pelo ID
 const buscarGenero = async (id) => {
     let message = JSON.parse(JSON.stringify(config_message))
     try {
-        // tratamentos dados incorretos
-        if (id == undefined || id.trim() == '' || id == null || id < 1 || isNaN(id)){
-            message.ERROR_BAD_REQUEST.field = '[ID] INVÁLIDO'
-            return message.ERROR_BAD_REQUEST // status_code 400
-        }
+        let resultValidarId = await validarId(id)
+        if(resultValidarId) return resultValidarId // 400
+
         // executa a função para retornar um genero pelo id
         let result = await generoDAO.selectByIdGenero(id)
 
-        if(result){
-            // verfica se o array é vazio
-            if(result.length > 0){
-                message.DEFAULT_MESSAGE.status = message.SUCESS_RESPONSE.status
-                message.DEFAULT_MESSAGE.status_code = message.SUCESS_RESPONSE.status_code
-                message.DEFAULT_MESSAGE.response.genero = result
-                return message.DEFAULT_MESSAGE // status_code 200
-            }
+        if(!result)  return message.ERROR_INTERNAL_SERVER_MODEL // status_code 500
+        if(result.length < 1) return message.ERROR_NOT_FOUND // status_code 404
 
-            return message.ERROR_NOT_FOUND // status_code 404
-
-        } else
-            return message.ERROR_INTERNAL_SERVER_MODEL // status_code 500
-
-    } catch (error) {
-        return message.ERROR_INTERNAL_SERVER_CONTROLLER // status_code 500
-    }
-    
+        return await montarMensagem(message, message.SUCESS_RESPONSE, result) // 200
+    } catch (error) {console.log(error)}
+    return message.ERROR_INTERNAL_SERVER_CONTROLLER // status_code 500
 }
 
 // Função para excluir um genero
@@ -155,42 +97,52 @@ const excluirGenero = async (id) => {
     let message = JSON.parse(JSON.stringify(config_message))
 
     try {
-        // Validaçao do erro 400 e 404
         let resultBuscarID = await buscarGenero(id)
-
-        if(!resultBuscarID.status)
-            return resultBuscarID
+        if(!resultBuscarID.status) return resultBuscarID // 404 e 400
 
         // executa a função que deleta um genero pelo id no banco de dados
         let result = await generoDAO.deleteGenero(id)
+        if(!result) return message.ERROR_INTERNAL_SERVER_MODEL // status_code 500
 
-        if(result){
-            message.DEFAULT_MESSAGE.status = message.SUCESS_DELETE_ITEM.status
-            message.DEFAULT_MESSAGE.status_code = message.SUCESS_DELETE_ITEM.status_code
-            message.DEFAULT_MESSAGE.message = message.SUCESS_DELETE_ITEM.message
-            return message.DEFAULT_MESSAGE // status_code 200
-        }
-        
-        return message.ERROR_INTERNAL_SERVER_MODEL // status_code 500
-        
-    } catch (error) {
-        return message.ERROR_INTERNAL_SERVER_CONTROLLER // status_code 500
-    }
+        return await montarMensagem(message, message.SUCESS_DELETE_ITEM) // 200
+    } catch (error) {console.log(error)}
+    return message.ERROR_INTERNAL_SERVER_CONTROLLER // status_code 500
 }
 
 // Função para validar todos os dados de genero (Obrigatórios, Quantidade de caracteres, etc)
-const validarDados = async (genero) => {
-    /* Criando um clone do objeto JSON para manipular sua 
-     * estrutura local sem modificar a estrutura original */
+const validarDados = async (genero, contentType) => {
+     // Valida se o formato de dados é JSON
+    if(String(contentType).toLowerCase() != 'application/json') return message.ERROR_CONTENT_TYPE // Status code 415
     let message = JSON.parse(JSON.stringify(config_message))
 
     // Validação de dados para os atributos do genero (Status 400)
-    if(genero.genero == undefined || genero.genero == null || genero.genero == '' || genero.genero.length > 80 || !isNaN(genero.genero)){
-        message.ERROR_BAD_REQUEST.field = '[NOME] INVÁLIDO'
+    if(genero.genero == undefined || genero.genero == null || genero.genero == '' || genero.genero.length > 80 || typeof(genero.genero) != 'string'){
+        message.ERROR_BAD_REQUEST.field = '[GENERO] INVÁLIDO'
         return message.ERROR_BAD_REQUEST
     }
 
     return false
+}
+
+const validarId = async (id) => {
+    let message = JSON.parse(JSON.stringify(config_message))
+
+    if(id == undefined || id == '' || id == null || id <= 0 || isNaN(String(id))){
+        message.ERROR_BAD_REQUEST.field = '[ID] INVÁLIDO'
+        return message.ERROR_BAD_REQUEST // 400
+    }
+
+    return false
+}
+
+const montarMensagem = async (base,status,response = null) => {
+    base.DEFAULT_MESSAGE.status = status.status
+    base.DEFAULT_MESSAGE.status_code = status.status_code
+    base.DEFAULT_MESSAGE.message = status.message
+
+    if(response != null) base.DEFAULT_MESSAGE.response.genero = response
+
+    return base.DEFAULT_MESSAGE // 200 ou 201
 }
 
 module.exports = {

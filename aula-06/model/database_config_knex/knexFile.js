@@ -4,7 +4,7 @@ module.exports = {
       client: 'mysql2',
       connection: {
         host: 'localhost',
-        user: 'rootz', // Substitua pelo seu usuário
+        user: 'root', // Substitua pelo seu usuário
         password: 'bcd127', // Substitua pela sua senha
         database: 'db_filmes_20261_a',
         port: 3306, // Porta padrão do MySQL

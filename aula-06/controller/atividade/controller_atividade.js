@@ -22,7 +22,7 @@ const inserirNovaAtividade = async (atividade, contentType) => {
         atividade.id = result
         return await montarMensagem(message, message.SUCESS_CREATED_ITEM, atividade)
 
-    } catch (error) {}
+    } catch (error) {console.log(error)}
     return message.ERROR_INTERNAL_SERVER_CONTROLLER
 }
 
@@ -44,7 +44,7 @@ const atualizarAtividade = async (atividade, id, contentType) => {
 
         return await montarMensagem(message, message.SUCESS_UPDATE_ITEM, atividade)
 
-    } catch (error) {}
+    } catch (error) {console.log(error)}
     return message.ERROR_INTERNAL_SERVER_CONTROLLER // 500
 }
 
@@ -60,14 +60,12 @@ const listarAtividade = async () => {
         // verfica se o array é vazio
         if(result.length <= 0) return message.ERROR_NOT_FOUND // status_code 404
 
-        message.DEFAULT_MESSAGE.status = message.SUCESS_RESPONSE.status
-        message.DEFAULT_MESSAGE.status_code = message.SUCESS_RESPONSE.status_code
+        let listarAtividadeMessage = await montarMensagem(message, message.SUCESS_RESPONSE, result)
         message.DEFAULT_MESSAGE.response.count = result.length
-        message.DEFAULT_MESSAGE.response.atividade = result
 
-        return message.DEFAULT_MESSAGE // status_code 200
+        return listarAtividadeMessage // status_code 200
 
-    } catch (error) {}
+    } catch (error) {console.log(error)}
     return message.ERROR_INTERNAL_SERVER_CONTROLLER // 500
 }
 
@@ -84,11 +82,11 @@ const buscarAtividade = async (id) => {
 
         if(!result) return message.ERROR_INTERNAL_SERVER_MODEL // 500
 
-        if(result.length <= 0) return config_message.ERROR_NOT_FOUND
+        if(result.length < 1) return config_message.ERROR_NOT_FOUND
 
         return await montarMensagem(message, message.SUCESS_RESPONSE, result)
 
-    } catch (error) {}
+    } catch (error) {console.log(error)}
     return message.ERROR_INTERNAL_SERVER_CONTROLLER // 500
 }
 
@@ -107,7 +105,7 @@ const excluirAtividade = async (id) => {
 
         return await montarMensagem(message, message.SUCESS_DELETE_ITEM)
 
-    } catch (error) {}
+    } catch (error) {console.log(error)}
     return message.ERROR_INTERNAL_SERVER_CONTROLLER // 500
 }
 
@@ -141,7 +139,7 @@ const montarMensagem = async (base,status,response = null) => {
     base.DEFAULT_MESSAGE.status_code = status.status_code
     base.DEFAULT_MESSAGE.message = status.message
 
-    if(response != null) base.DEFAULT_MESSAGE.response = response
+    if(response != null) base.DEFAULT_MESSAGE.response.atividade = response
 
     return base.DEFAULT_MESSAGE // 200 ou 201
 }
