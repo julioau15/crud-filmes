@@ -3,7 +3,7 @@ module.exports = {
       // ⚠️ ALTERAÇÃO: Define o cliente como 'mysql2'
       client: 'mysql2',
       connection: {
-        host: 'localhost',
+        host: 'crud-filmes-aum3.onrender.com',
         user: 'root', // Substitua pelo seu usuário
         password: 'bcd127', // Substitua pela sua senha
         database: 'db_filmes_20261_a',
