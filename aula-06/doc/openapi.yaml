@@ -1,0 +1,1208 @@
+openapi: 3.0.3
+info:
+  title: Projeto de Filmes - SENAI Jandira
+  description: API destinada para controlar filmes
+  termsOfService: http://swagger.io/terms/
+  version: 1.0.4.26
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+  - url:  http://localhost:8080
+paths:
+  /v1/senai/locadora/filme:
+    post:
+      tags:
+        - filme
+      summary: Adiciona um novo filme
+      description: Adiciona um novo filme no banco de dados
+      requestBody:
+        description: JSON contendo os dados do novo filme a ser inserido no sistema
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Filme'
+        required: true
+      responses:
+        '201':
+          description: Successful operation
+        '400':
+          description: Invalid input
+        '415':
+          description: Error Content type
+        '500':
+          description: Error Internal Server (Model or Controller)
+    get:
+      tags:
+        - filme
+      summary: Lista todos os Filmes
+      description: Listagem de todos os filmes registrados no sistema
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Filme'          
+           
+        '404':
+          description: Not Found
+        '500':
+          description: Error Internal Server (Model or Controller)
+  
+  /v1/senai/locadora/filme/{id}:
+    get:
+      tags:
+        - filme
+      summary: Busca um filme pelo ID
+      description: Retorna um filme pelo ID
+      parameters:
+        - name: id
+          in: path
+          description: ID of pet to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Filme'          
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found
+    put:
+      tags:
+        - filme
+      summary: Update an existing pet
+      description: Update an existing pet by Id
+      parameters:
+        - name: id
+          in: path
+          description: ID of pet to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Update an existent pet in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Filme'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Filme'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found
+        '500':
+          description: Error Internal Server (Model or Controller)
+       
+    delete:
+      tags:
+        - filme
+      summary: Delete filme
+      description: Excluir um filme
+      parameters:
+        - name: id
+          in: path
+          description: ID of pet to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Filme'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found
+        '500':
+          description: Error Internal Server (Model or Controller)  
+  
+  /v1/senai/locadora/atividade:
+    post:
+      tags:
+        - atividade
+      summary: Adiciona uma nova atividade
+      description: Adiciona uma nova atividade no banco de dados
+      requestBody:
+        description: JSON contendo os dados da nova atividade a ser inserida no sistema
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Atividade'
+        required: true
+      responses:
+        '201':
+          description: Successful operation
+        '400':
+          description: Invalid input
+        '415':
+          description: Error Content type
+        '500':
+          description: Error Internal Server (Model or Controller)
+
+    get:
+      tags:
+        - atividade
+      summary: Lista todas as atividades
+      description: Listagem de todas as atividades registradas no sistema
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Atividade'
+
+        '404':
+          description: Not Found
+
+        '500':
+          description: Error Internal Server (Model or Controller)
+
+  /v1/senai/locadora/atividade/{id}:
+    get:
+      tags:
+        - atividade
+      summary: Busca uma atividade pelo ID
+      description: Retorna uma atividade pelo ID
+      parameters:
+        - name: id
+          in: path
+          description: ID da atividade
+          required: true
+          schema:
+            type: integer
+            format: int64
+
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Atividade'
+
+        '400':
+          description: Invalid ID supplied
+
+        '404':
+          description: Activity not found
+
+    put:
+      tags:
+        - atividade
+      summary: Update an existing activity
+      description: Update an existing activity by Id
+      parameters:
+        - name: id
+          in: path
+          description: ID da atividade
+          required: true
+          schema:
+            type: integer
+            format: int64
+
+      requestBody:
+        description: Update an existent activity in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Atividade'
+        required: true
+
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Atividade'
+
+        '400':
+          description: Invalid ID supplied
+
+        '404':
+          description: Activity not found
+
+        '500':
+          description: Error Internal Server (Model or Controller)
+
+    delete:
+      tags:
+        - atividade
+      summary: Delete activity
+      description: Excluir uma atividade
+      parameters:
+        - name: id
+          in: path
+          description: ID da atividade
+          required: true
+          schema:
+            type: integer
+            format: int64
+
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Atividade'
+
+        '400':
+          description: Invalid ID supplied
+
+        '404':
+          description: Activity not found
+
+        '500':
+          description: Error Internal Server (Model or Controller)
+
+  /v1/senai/locadora/ator:
+    post:
+      tags:
+        - ator
+      summary: Adiciona um novo ator
+      description: Adiciona um novo ator no banco de dados
+      requestBody:
+        description: JSON contendo os dados do novo ator a ser inserido no sistema
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Ator'
+        required: true
+
+      responses:
+        '201':
+          description: Successful operation
+
+        '400':
+          description: Invalid input
+
+        '415':
+          description: Error Content type
+
+        '500':
+          description: Error Internal Server (Model or Controller)
+
+    get:
+      tags:
+        - ator
+      summary: Lista todos os atores
+      description: Listagem de todos os atores registrados no sistema
+
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ator'
+
+        '404':
+          description: Not Found
+
+        '500':
+          description: Error Internal Server (Model or Controller)
+
+  /v1/senai/locadora/ator/{id}:
+    get:
+      tags:
+        - ator
+      summary: Busca um ator pelo ID
+      description: Retorna um ator pelo ID
+
+      parameters:
+        - name: id
+          in: path
+          description: ID do ator
+          required: true
+          schema:
+            type: integer
+            format: int64
+
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ator'
+
+        '400':
+          description: Invalid ID supplied
+
+        '404':
+          description: Actor not found
+
+    put:
+      tags:
+        - ator
+      summary: Update an existing actor
+      description: Update an existing actor by Id
+
+      parameters:
+        - name: id
+          in: path
+          description: ID do ator
+          required: true
+          schema:
+            type: integer
+            format: int64
+
+      requestBody:
+        description: Update an existent actor in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Ator'
+        required: true
+
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ator'
+
+        '400':
+          description: Invalid ID supplied
+
+        '404':
+          description: Actor not found
+
+        '500':
+          description: Error Internal Server (Model or Controller)
+
+    delete:
+      tags:
+        - ator
+      summary: Delete actor
+      description: Excluir um ator
+
+      parameters:
+        - name: id
+          in: path
+          description: ID do ator
+          required: true
+          schema:
+            type: integer
+            format: int64
+
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ator'
+
+        '400':
+          description: Invalid ID supplied
+
+        '404':
+          description: Actor not found
+
+        '500':
+          description: Error Internal Server (Model or Controller)
+  
+  /v1/senai/locadora/classificacao:
+    post:
+      tags:
+        - classificacao
+      summary: Adiciona uma nova classificacao
+      description: Adiciona uma nova classificacao no banco de dados
+      requestBody:
+        description: JSON contendo os dados da nova classificacao a ser inserida no sistema
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Classificacao'
+        required: true
+
+      responses:
+        '201':
+          description: Successful operation
+
+        '400':
+          description: Invalid input
+
+        '415':
+          description: Error Content type
+
+        '500':
+          description: Error Internal Server (Model or Controller)
+
+    get:
+      tags:
+        - classificacao
+      summary: Lista todas as classificacoes
+      description: Listagem de todas as classificacoes registradas no sistema
+
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Classificacao'
+
+        '404':
+          description: Not Found
+
+        '500':
+          description: Error Internal Server (Model or Controller)
+
+  /v1/senai/locadora/classificacao/{id}:
+    get:
+      tags:
+        - classificacao
+      summary: Busca uma classificacao pelo ID
+      description: Retorna uma classificacao pelo ID
+
+      parameters:
+        - name: id
+          in: path
+          description: ID da classificacao
+          required: true
+          schema:
+            type: integer
+            format: int64
+
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Classificacao'
+
+        '400':
+          description: Invalid ID supplied
+
+        '404':
+          description: Classification not found
+
+    put:
+      tags:
+        - classificacao
+      summary: Update an existing classification
+      description: Update an existing classification by Id
+
+      parameters:
+        - name: id
+          in: path
+          description: ID da classificacao
+          required: true
+          schema:
+            type: integer
+            format: int64
+
+      requestBody:
+        description: Update an existent classification in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Classificacao'
+        required: true
+
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Classificacao'
+
+        '400':
+          description: Invalid ID supplied
+
+        '404':
+          description: Classification not found
+
+        '500':
+          description: Error Internal Server (Model or Controller)
+
+    delete:
+      tags:
+        - classificacao
+      summary: Delete classification
+      description: Excluir uma classificacao
+
+      parameters:
+        - name: id
+          in: path
+          description: ID da classificacao
+          required: true
+          schema:
+            type: integer
+            format: int64
+
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Classificacao'
+
+        '400':
+          description: Invalid ID supplied
+
+        '404':
+          description: Classification not found
+
+        '500':
+          description: Error Internal Server (Model or Controller)
+
+  /v1/senai/locadora/diretor:
+    post:
+      tags:
+        - diretor
+      summary: Adiciona um novo diretor
+      description: Adiciona um novo diretor no banco de dados
+      requestBody:
+        description: JSON contendo os dados do novo diretor a ser inserido no sistema
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Diretor'
+        required: true
+
+      responses:
+        '201':
+          description: Successful operation
+
+        '400':
+          description: Invalid input
+
+        '415':
+          description: Error Content type
+
+        '500':
+          description: Error Internal Server (Model or Controller)
+
+    get:
+      tags:
+        - diretor
+      summary: Lista todos os diretores
+      description: Listagem de todos os diretores registrados no sistema
+
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Diretor'
+
+        '404':
+          description: Not Found
+
+        '500':
+          description: Error Internal Server (Model or Controller)
+
+  /v1/senai/locadora/diretor/{id}:
+    get:
+      tags:
+        - diretor
+      summary: Busca um diretor pelo ID
+      description: Retorna um diretor pelo ID
+
+      parameters:
+        - name: id
+          in: path
+          description: ID do diretor
+          required: true
+          schema:
+            type: integer
+            format: int64
+
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Diretor'
+
+        '400':
+          description: Invalid ID supplied
+
+        '404':
+          description: Director not found
+
+    put:
+      tags:
+        - diretor
+      summary: Update an existing director
+      description: Update an existing director by Id
+
+      parameters:
+        - name: id
+          in: path
+          description: ID do diretor
+          required: true
+          schema:
+            type: integer
+            format: int64
+
+      requestBody:
+        description: Update an existent director in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Diretor'
+        required: true
+
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Diretor'
+
+        '400':
+          description: Invalid ID supplied
+
+        '404':
+          description: Director not found
+
+        '500':
+          description: Error Internal Server (Model or Controller)
+
+    delete:
+      tags:
+        - diretor
+      summary: Delete director
+      description: Excluir um diretor
+
+      parameters:
+        - name: id
+          in: path
+          description: ID do diretor
+          required: true
+          schema:
+            type: integer
+            format: int64
+
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Diretor'
+
+        '400':
+          description: Invalid ID supplied
+
+        '404':
+          description: Director not found
+
+        '500':
+          description: Error Internal Server (Model or Controller)
+    
+  /v1/senai/locadora/genero:
+    post:
+      tags:
+        - genero
+      summary: Adiciona um novo genero
+      description: Adiciona um novo genero no banco de dados
+      requestBody:
+        description: JSON contendo os dados do novo genero a ser inserido no sistema
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Genero'
+        required: true
+
+      responses:
+        '201':
+          description: Successful operation
+
+        '400':
+          description: Invalid input
+
+        '415':
+          description: Error Content type
+
+        '500':
+          description: Error Internal Server (Model or Controller)
+
+    get:
+      tags:
+        - genero
+      summary: Lista todos os generos
+      description: Listagem de todos os generos registrados no sistema
+
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Genero'
+
+        '404':
+          description: Not Found
+
+        '500':
+          description: Error Internal Server (Model or Controller)
+
+  /v1/senai/locadora/genero/{id}:
+    get:
+      tags:
+        - genero
+      summary: Busca um genero pelo ID
+      description: Retorna um genero pelo ID
+
+      parameters:
+        - name: id
+          in: path
+          description: ID do genero
+          required: true
+          schema:
+            type: integer
+            format: int64
+
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Genero'
+
+        '400':
+          description: Invalid ID supplied
+
+        '404':
+          description: Genre not found
+
+    put:
+      tags:
+        - genero
+      summary: Update an existing genre
+      description: Update an existing genre by Id
+
+      parameters:
+        - name: id
+          in: path
+          description: ID do genero
+          required: true
+          schema:
+            type: integer
+            format: int64
+
+      requestBody:
+        description: Update an existent genre in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Genero'
+        required: true
+
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Genero'
+
+        '400':
+          description: Invalid ID supplied
+
+        '404':
+          description: Genre not found
+
+        '500':
+          description: Error Internal Server (Model or Controller)
+
+    delete:
+      tags:
+        - genero
+      summary: Delete genre
+      description: Excluir um genero
+
+      parameters:
+        - name: id
+          in: path
+          description: ID do genero
+          required: true
+          schema:
+            type: integer
+            format: int64
+
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Genero'
+
+        '400':
+          description: Invalid ID supplied
+
+        '404':
+          description: Genre not found
+
+        '500':
+          description: Error Internal Server (Model or Controller)
+
+  /v1/senai/locadora/nacionalidade:
+    post:
+      tags:
+        - nacionalidade
+      summary: Adiciona uma nova nacionalidade
+      description: Adiciona uma nova nacionalidade no banco de dados
+      requestBody:
+        description: JSON contendo os dados da nova nacionalidade a ser inserida no sistema
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Nacionalidade'
+        required: true
+
+      responses:
+        '201':
+          description: Successful operation
+
+        '400':
+          description: Invalid input
+
+        '415':
+          description: Error Content type
+
+        '500':
+          description: Error Internal Server (Model or Controller)
+
+    get:
+      tags:
+        - nacionalidade
+      summary: Lista todas as nacionalidades
+      description: Listagem de todas as nacionalidades registradas no sistema
+
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Nacionalidade'
+
+        '404':
+          description: Not Found
+
+        '500':
+          description: Error Internal Server (Model or Controller)
+
+  /v1/senai/locadora/nacionalidade/{id}:
+    get:
+      tags:
+        - nacionalidade
+      summary: Busca uma nacionalidade pelo ID
+      description: Retorna uma nacionalidade pelo ID
+
+      parameters:
+        - name: id
+          in: path
+          description: ID da nacionalidade
+          required: true
+          schema:
+            type: integer
+            format: int64
+
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Nacionalidade'
+
+        '400':
+          description: Invalid ID supplied
+
+        '404':
+          description: Nationality not found
+
+    put:
+      tags:
+        - nacionalidade
+      summary: Update an existing nationality
+      description: Update an existing nationality by Id
+
+      parameters:
+        - name: id
+          in: path
+          description: ID da nacionalidade
+          required: true
+          schema:
+            type: integer
+            format: int64
+
+      requestBody:
+        description: Update an existent nationality in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Nacionalidade'
+        required: true
+
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Nacionalidade'
+
+        '400':
+          description: Invalid ID supplied
+
+        '404':
+          description: Nationality not found
+
+        '500':
+          description: Error Internal Server (Model or Controller)
+
+    delete:
+      tags:
+        - nacionalidade
+      summary: Delete nationality
+      description: Excluir uma nacionalidade
+
+      parameters:
+        - name: id
+          in: path
+          description: ID da nacionalidade
+          required: true
+          schema:
+            type: integer
+            format: int64
+
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Nacionalidade'
+
+        '400':
+          description: Invalid ID supplied
+
+        '404':
+          description: Nationality not found
+
+        '500':
+          description: Error Internal Server (Model or Controller)
+
+components:
+  schemas:
+    Filme:
+      required:
+        - nome
+        - data_lancamento
+        - duracao
+        - sinopse
+        - valor
+
+      type: object
+
+      properties:
+        id:
+          type: integer
+
+        nome:
+          type: string
+
+        data_lancamento:
+          type: string
+
+        duracao:
+          type: number
+
+        sinopse:
+          type: string
+
+        avaliacao:
+          type: string
+
+        valor:
+          type: number
+
+        capa:
+          type: string
+
+        id_classificacao:
+          type: integer
+
+
+    Atividade:
+      required:
+        - nome
+
+      type: object
+
+      properties:
+        id:
+          type: integer
+
+        nome:
+          type: string
+
+
+    Ator:
+      required:
+        - nome
+        - data_nascimento
+        - ativo
+        - biografia
+
+      type: object
+
+      properties:
+        id:
+          type: integer
+
+        nome:
+          type: string
+
+        data_nascimento:
+          type: string
+
+        data_falecimento:
+          type: string
+
+        ativo:
+          type: integer
+
+        biografia:
+          type: string
+
+        foto:
+          type: string
+
+
+    Classificacao:
+      required:
+        - idade
+        - classificacao
+        - descricao
+
+      type: object
+
+      properties:
+        id:
+          type: integer
+
+        idade:
+          type: integer
+
+        classificacao:
+          type: string
+
+        descricao:
+          type: string
+
+
+    Diretor:
+      required:
+        - nome
+        - data_nascimento
+        - ativo
+        - biografia
+
+      type: object
+
+      properties:
+        id:
+          type: integer
+
+        nome:
+          type: string
+
+        data_nascimento:
+          type: string
+
+        data_falecimento:
+          type: string
+
+        ativo:
+          type: integer
+
+        biografia:
+          type: string
+
+        foto:
+          type: string
+
+
+    Genero:
+      required:
+        - genero
+
+      type: object
+
+      properties:
+        id:
+          type: integer
+
+        genero:
+          type: string
+
+
+    Nacionalidade:
+      required:
+        - pais
+
+      type: object
+
+      properties:
+        id:
+          type: integer
+
+        pais:
+          type: string
+
+        sigla:
+          type: string

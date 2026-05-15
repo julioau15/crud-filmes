@@ -421,5 +421,5 @@ app.delete('/v1/senai/locadora/diretor/:id', async (req,res) => {
 
 // Serve para inicializar a API para receber requisições
 app.listen(port, () => {
-    console.log(`API filmes rodando em http://localhost:${port}`)
+    console.log(`API filmes rodando em http://localhost:8080`)
 })
