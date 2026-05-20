@@ -60,6 +60,28 @@ const {
     buscarDiretor,
     excluirDiretor
 } = require('./controller/diretor/controller_diretor.js')
+const { 
+    inserirNovoFilmeAtor,
+    atualizarFilmeAtor,
+    listarFilmeAtor,
+    buscarFilmeAtor,
+    excluirFilmeAtor
+} = require('./controller/filmeAtor/controller_filmeAtor.js')
+const { 
+    inserirNovoFilmeDiretor,
+    atualizarFilmeDiretor,
+    listarFilmeDiretor,
+    buscarFilmeDiretor,
+    excluirFilmeDiretor
+} = require('./controller/filmeDiretor/controller_filmeDiretor.js')
+const { 
+    inserirNovoFilmeGenero,
+    atualizarFilmeGenero,
+    listarFilmeGenero,
+    buscarFilmeGenero,
+    excluirFilmeGenero
+} = require('./controller/filmeGenero/controller_filmeGenero.js')
+
 
 // Criando um objeto para manipular o EXPRESS
 const app = express()
@@ -418,6 +440,133 @@ app.delete('/v1/senai/locadora/diretor/:id', async (req,res) => {
     let result = await excluirDiretor(id)
     res.status(result.status_code).json(result)
 })
+
+// ---------------- filmeAtor -----------------
+
+// endpoint para inserir filmeAtor
+app.post('/v1/senai/locadora/filmeAtor',bodyParserJSON, async (req,res) => {
+    // recebe o conteudo dentro do body da requisição
+    let dados = req.body
+    let contentType = req.headers['content-type']
+
+    let result = await inserirNovoFilmeAtor(dados,contentType)
+    res.status(result.status_code).json(result)
+})
+
+// endpoint para retornar todas filmeAtors
+app.get('/v1/senai/locadora/filmeAtor', async (req,res) => {
+    let result = await listarFilmeAtor()
+    res.status(result.status_code).json(result)
+})
+
+// endpoint para buscar um filmeAtor pelo id
+app.get('/v1/senai/locadora/filmeAtor/:id', async (req,res) => {
+    let id = req.params.id
+    let result = await buscarFilmeAtor(id)
+    res.status(result.status_code).json(result)
+})
+
+// endpoint para atualizar uma filmeAtor pelo id
+app.put('/v1/senai/locadora/filmeAtor/:id', bodyParserJSON, async (req,res) => {
+    let id          = req.params.id                 // Recebe o id por parametro
+    let dados       = req.body                      // Recebe os dados do body da requisição
+    let contentType = req.headers['content-type']   // Recebe o ContentType do header da requisição
+    
+    let result      = await atualizarFilmeAtor(dados, id, contentType)
+    res.status(result.status_code).json(result)
+})
+
+// endpoint para deletar uma filmeAtor pelo id
+app.delete('/v1/senai/locadora/filmeAtor/:id', async (req,res) => {
+    let id = req.params.id
+    let result = await excluirFilmeAtor(id)
+    res.status(result.status_code).json(result)
+})
+
+// ---------------- filmeDiretor -----------------
+
+// endpoint para inserir filmeDiretor
+app.post('/v1/senai/locadora/filmeDiretor',bodyParserJSON, async (req,res) => {
+    // recebe o conteudo dentro do body da requisição
+    let dados = req.body
+    let contentType = req.headers['content-type']
+
+    let result = await inserirNovoFilmeDiretor(dados,contentType)
+    res.status(result.status_code).json(result)
+})
+
+// endpoint para retornar todas filmeDiretors
+app.get('/v1/senai/locadora/filmeDiretor', async (req,res) => {
+    let result = await listarFilmeDiretor()
+    res.status(result.status_code).json(result)
+})
+
+// endpoint para buscar um filmeDiretor pelo id
+app.get('/v1/senai/locadora/filmeDiretor/:id', async (req,res) => {
+    let id = req.params.id
+    let result = await buscarFilmeDiretor(id)
+    res.status(result.status_code).json(result)
+})
+
+// endpoint para atualizar uma filmeDiretor pelo id
+app.put('/v1/senai/locadora/filmeDiretor/:id', bodyParserJSON, async (req,res) => {
+    let id          = req.params.id                 // Recebe o id por parametro
+    let dados       = req.body                      // Recebe os dados do body da requisição
+    let contentType = req.headers['content-type']   // Recebe o ContentType do header da requisição
+    
+    let result      = await atualizarFilmeDiretor(dados, id, contentType)
+    res.status(result.status_code).json(result)
+})
+
+// endpoint para deletar uma filmeDiretor pelo id
+app.delete('/v1/senai/locadora/filmeDiretor/:id', async (req,res) => {
+    let id = req.params.id
+    let result = await excluirFilmeDiretor(id)
+    res.status(result.status_code).json(result)
+})
+
+// ---------------- filmeGenero -----------------
+
+// endpoint para inserir filmeGenero
+app.post('/v1/senai/locadora/filmeGenero',bodyParserJSON, async (req,res) => {
+    // recebe o conteudo dentro do body da requisição
+    let dados = req.body
+    let contentType = req.headers['content-type']
+
+    let result = await inserirNovoFilmeGenero(dados,contentType)
+    res.status(result.status_code).json(result)
+})
+
+// endpoint para retornar todas filmeGenero
+app.get('/v1/senai/locadora/filmeGenero', async (req,res) => {
+    let result = await listarFilmeGenero()
+    res.status(result.status_code).json(result)
+})
+
+// endpoint para buscar um filmeGenero pelo id
+app.get('/v1/senai/locadora/filmeGenero/:id', async (req,res) => {
+    let id = req.params.id
+    let result = await buscarFilmeGenero(id)
+    res.status(result.status_code).json(result)
+})
+
+// endpoint para atualizar um filmeGenero pelo id
+app.put('/v1/senai/locadora/filmeGenero/:id', bodyParserJSON, async (req,res) => {
+    let id          = req.params.id                 // Recebe o id por parametro
+    let dados       = req.body                      // Recebe os dados do body da requisição
+    let contentType = req.headers['content-type']   // Recebe o ContentType do header da requisição
+    
+    let result      = await atualizarFilmeGenero(dados, id, contentType)
+    res.status(result.status_code).json(result)
+})
+
+// endpoint para deletar um filmeGenero pelo id
+app.delete('/v1/senai/locadora/filmeGenero/:id', async (req,res) => {
+    let id = req.params.id
+    let result = await excluirFilmeGenero(id)
+    res.status(result.status_code).json(result)
+})
+
 
 // Serve para inicializar a API para receber requisições
 app.listen(port, () => {
