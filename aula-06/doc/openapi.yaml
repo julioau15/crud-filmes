@@ -1046,6 +1046,7 @@ components:
         - duracao
         - sinopse
         - valor
+        - id_classificacao
 
       type: object
 
@@ -1066,7 +1067,7 @@ components:
           type: string
 
         avaliacao:
-          type: string
+          type: number
 
         valor:
           type: number
