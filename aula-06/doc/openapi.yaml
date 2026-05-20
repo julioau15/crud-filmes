@@ -9,6 +9,7 @@ externalDocs:
   url: http://swagger.io
 servers:
   - url:  http://localhost:8080
+
 paths:
   /v1/senai/locadora/filme:
     post:

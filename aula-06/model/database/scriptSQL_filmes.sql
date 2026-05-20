@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS tbl_genero (
 # Cria tabela tbl_classificacao
 CREATE TABLE IF NOT EXISTS tbl_classificacao (
 	id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    idade INT NOT NULL,
+    simbolo VARCHAR(3) NOT NULL,
     classificacao VARCHAR(80) NOT NULL,
     descricao VARCHAR(250) NOT NULL
 );
@@ -178,13 +178,13 @@ CREATE TABLE IF NOT EXISTS tbl_diretor_atividade (
 );
 
 # INSERTS tbl_classificacao
-INSERT INTO tbl_classificacao (idade, classificacao, descricao) VALUES
-(0, 'Livre', 'Conteúdo livre para todos os públicos.'),
-(10, 'Não recomendado para menores de 10 anos', 'Violência leve e linguagem imprópria.'),
-(12, 'Não recomendado para menores de 12 anos', 'Cenas de tensão moderada.'),
-(14, 'Não recomendado para menores de 14 anos', 'Temas sensíveis e violência moderada.'),
-(16, 'Não recomendado para menores de 16 anos', 'Violência intensa e drogas lícitas.'),
-(18, 'Não recomendado para menores de 18 anos', 'Conteúdo adulto e violência extrema.');
+INSERT INTO tbl_classificacao (simbolo, classificacao, descricao) VALUES
+('L', 'Livre para todas as idades', 'Conteúdo livre para todos os públicos.'),
+('10', 'Não recomendado para menores de 10 anos', 'Violência leve e linguagem imprópria.'),
+('12', 'Não recomendado para menores de 12 anos', 'Cenas de tensão moderada.'),
+('14', 'Não recomendado para menores de 14 anos', 'Temas sensíveis e violência moderada.'),
+('16', 'Não recomendado para menores de 16 anos', 'Violência intensa e drogas lícitas.'),
+('18', 'Não recomendado para menores de 18 anos', 'Conteúdo adulto e violência extrema.');
 
 # INSERTS tbl_genero
 INSERT INTO tbl_genero (genero) VALUES
