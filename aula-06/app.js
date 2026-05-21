@@ -81,6 +81,35 @@ const {
     buscarFilmeGenero,
     excluirFilmeGenero
 } = require('./controller/filmeGenero/controller_filmeGenero.js')
+const { 
+    inserirNovoAtorAtividade,
+    atualizarAtorAtividade,
+    listarAtorAtividade,
+    buscarAtorAtividade,
+    excluirAtorAtividade
+} = require('./controller/atorAtividade/controller_atorAtividade.js')
+const { 
+    inserirNovoAtorNacionalidade,
+    atualizarAtorNacionalidade,
+    listarAtorNacionalidade,
+    buscarAtorNacionalidade,
+    excluirAtorNacionalidade
+} = require('./controller/atorNacionalidade/controller_atorNacionalidade.js')
+const { 
+    inserirNovoDiretorNacionalidade,
+    atualizarDiretorNacionalidade,
+    listarDiretorNacionalidade,
+    buscarDiretorNacionalidade,
+    excluirDiretorNacionalidade
+} = require('./controller/diretorNacionalidade/controller_diretorNacionalidade.js')
+const { 
+    inserirNovoDiretorAtividade,
+    atualizarDiretorAtividade,
+    listarDiretorAtividade,
+    buscarDiretorAtividade,
+    excluirDiretorAtividade
+} = require('./controller/diretorAtividade/controller_diretorAtividade.js')
+
 
 
 // Criando um objeto para manipular o EXPRESS
@@ -566,6 +595,175 @@ app.delete('/v1/senai/locadora/filmeGenero/:id', async (req,res) => {
     let result = await excluirFilmeGenero(id)
     res.status(result.status_code).json(result)
 })
+
+// ---------------- diretorNacionalidade -----------------
+
+// endpoint para inserir diretorNacionalidade
+app.post('/v1/senai/locadora/diretorNacionalidade',bodyParserJSON, async (req,res) => {
+    // recebe o conteudo dentro do body da requisição
+    let dados = req.body
+    let contentType = req.headers['content-type']
+
+    let result = await inserirNovoDiretorNacionalidade(dados,contentType)
+    res.status(result.status_code).json(result)
+})
+
+// endpoint para retornar todas diretorNacionalidade
+app.get('/v1/senai/locadora/diretorNacionalidade', async (req,res) => {
+    let result = await listarDiretorNacionalidade()
+    res.status(result.status_code).json(result)
+})
+
+// endpoint para buscar um diretorNacionalidade pelo id
+app.get('/v1/senai/locadora/diretorNacionalidade/:id', async (req,res) => {
+    let id = req.params.id
+    let result = await buscarDiretorNacionalidade(id)
+    res.status(result.status_code).json(result)
+})
+
+// endpoint para atualizar um diretorNacionalidade pelo id
+app.put('/v1/senai/locadora/diretorNacionalidade/:id', bodyParserJSON, async (req,res) => {
+    let id          = req.params.id                 // Recebe o id por parametro
+    let dados       = req.body                      // Recebe os dados do body da requisição
+    let contentType = req.headers['content-type']   // Recebe o ContentType do header da requisição
+    
+    let result      = await atualizarDiretorNacionalidade(dados, id, contentType)
+    res.status(result.status_code).json(result)
+})
+
+// endpoint para deletar um diretorNacionalidade pelo id
+app.delete('/v1/senai/locadora/diretorNacionalidade/:id', async (req,res) => {
+    let id = req.params.id
+    let result = await excluirDiretorNacionalidade(id)
+    res.status(result.status_code).json(result)
+})
+
+// ---------------- diretorAtividade -----------------
+
+// endpoint para inserir diretorAtividade
+app.post('/v1/senai/locadora/diretorAtividade',bodyParserJSON, async (req,res) => {
+    // recebe o conteudo dentro do body da requisição
+    let dados = req.body
+    let contentType = req.headers['content-type']
+
+    let result = await inserirNovoDiretorAtividade(dados,contentType)
+    res.status(result.status_code).json(result)
+})
+
+// endpoint para retornar todas diretorAtividade
+app.get('/v1/senai/locadora/diretorAtividade', async (req,res) => {
+    let result = await listarDiretorAtividade()
+    res.status(result.status_code).json(result)
+})
+
+// endpoint para buscar um diretorAtividade pelo id
+app.get('/v1/senai/locadora/diretorAtividade/:id', async (req,res) => {
+    let id = req.params.id
+    let result = await buscarDiretorAtividade(id)
+    res.status(result.status_code).json(result)
+})
+
+// endpoint para atualizar um diretorAtividade pelo id
+app.put('/v1/senai/locadora/diretorAtividade/:id', bodyParserJSON, async (req,res) => {
+    let id          = req.params.id                 // Recebe o id por parametro
+    let dados       = req.body                      // Recebe os dados do body da requisição
+    let contentType = req.headers['content-type']   // Recebe o ContentType do header da requisição
+    
+    let result      = await atualizarDiretorAtividade(dados, id, contentType)
+    res.status(result.status_code).json(result)
+})
+
+// endpoint para deletar um diretorAtividade pelo id
+app.delete('/v1/senai/locadora/diretorAtividade/:id', async (req,res) => {
+    let id = req.params.id
+    let result = await excluirDiretorAtividade(id)
+    res.status(result.status_code).json(result)
+})
+
+// ---------------- atorNacionalidade -----------------
+
+// endpoint para inserir atorNacionalidade
+app.post('/v1/senai/locadora/atorNacionalidade',bodyParserJSON, async (req,res) => {
+    // recebe o conteudo dentro do body da requisição
+    let dados = req.body
+    let contentType = req.headers['content-type']
+
+    let result = await inserirNovoAtorNacionalidade(dados,contentType)
+    res.status(result.status_code).json(result)
+})
+
+// endpoint para retornar todas atorNacionalidade
+app.get('/v1/senai/locadora/atorNacionalidade', async (req,res) => {
+    let result = await listarAtorNacionalidade()
+    res.status(result.status_code).json(result)
+})
+
+// endpoint para buscar um atorNacionalidade pelo id
+app.get('/v1/senai/locadora/atorNacionalidade/:id', async (req,res) => {
+    let id = req.params.id
+    let result = await buscarAtorNacionalidade(id)
+    res.status(result.status_code).json(result)
+})
+
+// endpoint para atualizar um atorNacionalidade pelo id
+app.put('/v1/senai/locadora/atorNacionalidade/:id', bodyParserJSON, async (req,res) => {
+    let id          = req.params.id                 // Recebe o id por parametro
+    let dados       = req.body                      // Recebe os dados do body da requisição
+    let contentType = req.headers['content-type']   // Recebe o ContentType do header da requisição
+    
+    let result      = await atualizarAtorNacionalidade(dados, id, contentType)
+    res.status(result.status_code).json(result)
+})
+
+// endpoint para deletar um atorNacionalidade pelo id
+app.delete('/v1/senai/locadora/atorNacionalidade/:id', async (req,res) => {
+    let id = req.params.id
+    let result = await excluirAtorNacionalidade(id)
+    res.status(result.status_code).json(result)
+})
+
+// ---------------- atorAtividade -----------------
+
+// endpoint para inserir atorAtividade
+app.post('/v1/senai/locadora/atorAtividade',bodyParserJSON, async (req,res) => {
+    // recebe o conteudo dentro do body da requisição
+    let dados = req.body
+    let contentType = req.headers['content-type']
+
+    let result = await inserirNovoAtorAtividade(dados,contentType)
+    res.status(result.status_code).json(result)
+})
+
+// endpoint para retornar todas atorAtividade
+app.get('/v1/senai/locadora/atorAtividade', async (req,res) => {
+    let result = await listarAtorAtividade()
+    res.status(result.status_code).json(result)
+})
+
+// endpoint para buscar um atorAtividade pelo id
+app.get('/v1/senai/locadora/atorAtividade/:id', async (req,res) => {
+    let id = req.params.id
+    let result = await buscarAtorAtividade(id)
+    res.status(result.status_code).json(result)
+})
+
+// endpoint para atualizar um atorAtividade pelo id
+app.put('/v1/senai/locadora/atorAtividade/:id', bodyParserJSON, async (req,res) => {
+    let id          = req.params.id                 // Recebe o id por parametro
+    let dados       = req.body                      // Recebe os dados do body da requisição
+    let contentType = req.headers['content-type']   // Recebe o ContentType do header da requisição
+    
+    let result      = await atualizarAtorAtividade(dados, id, contentType)
+    res.status(result.status_code).json(result)
+})
+
+// endpoint para deletar um atorAtividade pelo id
+app.delete('/v1/senai/locadora/atorAtividade/:id', async (req,res) => {
+    let id = req.params.id
+    let result = await excluirAtorAtividade(id)
+    res.status(result.status_code).json(result)
+})
+
 
 
 // Serve para inicializar a API para receber requisições
