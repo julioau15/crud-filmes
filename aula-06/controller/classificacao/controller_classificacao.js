@@ -115,8 +115,8 @@ const validarDados = async (classificacao, contentType) => {
     // Valida se o formato de dados é JSON
     if(String(contentType).toLowerCase() != 'application/json') return message.ERROR_CONTENT_TYPE // Status code 415
 
-    if(classificacao.simbolo == undefined || classificacao.simbolo == null || classificacao.simbolo == '' || !isNaN(classificacao.simbolo) || classificacao.simbolo.length > 3){
-        message.ERROR_BAD_REQUEST.field = '[SIMBOLO] INVÁLIDO'
+    if(classificacao.sigla == undefined || classificacao.sigla == null || classificacao.sigla == '' || !isNaN(classificacao.sigla) || classificacao.sigla.length > 3){
+        message.ERROR_BAD_REQUEST.field = '[SIGLA] INVÁLIDO'
         return message.ERROR_BAD_REQUEST // 400
     }
 

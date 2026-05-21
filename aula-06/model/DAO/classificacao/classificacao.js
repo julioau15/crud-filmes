@@ -11,8 +11,8 @@ const knexConex = knex(knexConfig.development)
 
 // insert de classificacao
 const insertClassificacao = async (classificacao) => {
-    let sql = `INSERT INTO tbl_classificacao (simbolo, classificacao, descricao)
-               VALUES ('${classificacao.simbolo}',
+    let sql = `INSERT INTO tbl_classificacao (sigla, classificacao, descricao)
+               VALUES ('${classificacao.sigla}',
                        '${classificacao.classificacao}',
                        '${classificacao.descricao}')`
 
@@ -29,7 +29,7 @@ const insertClassificacao = async (classificacao) => {
 // update de classificacao
 const updateClassificacao = async (classificacao) => {
     let sql = `UPDATE tbl_classificacao
-               SET simbolo         = '${classificacao.simbolo}',
+               SET sigla         = '${classificacao.sigla}',
                    classificacao = '${classificacao.classificacao}',
                    descricao     = '${classificacao.descricao}'
                WHERE id  = ${classificacao.id}`
