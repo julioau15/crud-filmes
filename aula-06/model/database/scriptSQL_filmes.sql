@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS tbl_genero (
 # Cria tabela tbl_classificacao
 CREATE TABLE IF NOT EXISTS tbl_classificacao (
 	id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    simbolo VARCHAR(3) NOT NULL,
+    sigla VARCHAR(3) NOT NULL,
     classificacao VARCHAR(80) NOT NULL,
     descricao VARCHAR(250) NOT NULL
 );
@@ -178,7 +178,7 @@ CREATE TABLE IF NOT EXISTS tbl_diretor_atividade (
 );
 
 # INSERTS tbl_classificacao
-INSERT INTO tbl_classificacao (simbolo, classificacao, descricao) VALUES
+INSERT INTO tbl_classificacao (sigla, classificacao, descricao) VALUES
 ('L', 'Livre para todas as idades', 'Conteúdo livre para todos os públicos.'),
 ('10', 'Não recomendado para menores de 10 anos', 'Violência leve e linguagem imprópria.'),
 ('12', 'Não recomendado para menores de 12 anos', 'Cenas de tensão moderada.'),
