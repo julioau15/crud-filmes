@@ -26,7 +26,8 @@ const insertFilme = async (filme) => {
                         sinopse,
                         avaliacao,
                         valor,
-                        capa
+                        capa,
+                        id_classificacao
                     ) 
                     VALUES (
                         '${filme.nome}',
@@ -35,7 +36,8 @@ const insertFilme = async (filme) => {
                         '${filme.sinopse}',
                         if('${filme.avaliacao}' = '', null, '${filme.avaliacao}'),
                         '${filme.valor}',
-                        '${filme.capa}'
+                        '${filme.capa}',
+                        '${filme.id_classificacao}'
                     );`
 
         // Executa script SQL no banco de dados            
@@ -57,13 +59,14 @@ const updateFilme = async (filme) => {
     try {
         let sql = `
         UPDATE tbl_filme
-	    SET nome = '${filme.nome}',
-	    data_lancamento = '${filme.data_lancamento}',  
-	    duracao = '${filme.duracao}',
-	    sinopse = '${filme.sinopse}',
-	    avaliacao = if('${filme.avaliacao}' = '', null, '${filme.avaliacao}'), 
-  	    valor = '${filme.valor}',
-  	    capa = '${filme.capa}'
+	    SET nome            = '${filme.nome}',
+	    data_lancamento     = '${filme.data_lancamento}',  
+	    duracao             = '${filme.duracao}',
+	    sinopse             = '${filme.sinopse}',
+	    avaliacao           = if('${filme.avaliacao}' = '', null, '${filme.avaliacao}'), 
+  	    valor               = '${filme.valor}',
+  	    capa                = '${filme.capa}',
+        id_classificacao    = ${filme.id_classificacao}
         WHERE id = ${filme.id}
         `
         // Executa script SQL no banco de dados            

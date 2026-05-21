@@ -11,6 +11,9 @@ const config_message = require('../module/configMessages.js')
 // Import do arquivo DAO para fazer o CRUD do filme no banco de dados
 const filmeDAO = require('../../model/DAO/filme/filme.js')
 
+// Import de arquivos de Controller
+const controllerClassificacao = require('../classificacao/controller_classificacao.js')
+
 // Função para inserir um novo filme
 const inserirNovoFilme = async (filme, contentType) => {
     // Criando um clone do objeto JSON para manipular sua 
@@ -69,6 +72,15 @@ const listarFilme = async () => {
 
         if(result.length < 1) return message.ERROR_NOT_FOUND // status_code 404
 
+        // Percorre o array de filmes para identificar os dados da classificacao
+        for (filme of result) {
+            let classificacao = await controllerClassificacao.buscarClassificacao(filme.id_classificacao)
+            if(classificacao.status) {
+                filme.classificacao = classificacao.response.classificacao
+                delete filme.id_classificacao
+            }
+        }
+
         let listarFilmeMessage = await montarMensagem(message, message.SUCESS_RESPONSE, result)
         message.DEFAULT_MESSAGE.response.count = result.length
 
@@ -91,6 +103,15 @@ const buscarFilme = async (id) => {
 
         // verfica se o array é vazio
         if(result.length < 1) return message.ERROR_NOT_FOUND // status_code 404
+
+        // Percorre o array de filmes para identificar os dados da classificacao
+        for (filme of result) {
+            let classificacao = await controllerClassificacao.buscarClassificacao(filme.id_classificacao)
+            if(classificacao.status) {
+                filme.classificacao = classificacao.response.classificacao
+                delete filme.id_classificacao
+            }
+        }
 
         return await montarMensagem(message, message.SUCESS_RESPONSE, result) // 200
 
@@ -156,6 +177,11 @@ const validarDados = async (filme, contentType) => {
     
     if(filme.capa != null && filme.capa.length > 255){
         message.ERROR_BAD_REQUEST.field = '[CAPA] INVÁLIDO'
+        return message.ERROR_BAD_REQUEST
+    }
+
+    if(filme.id_classificacao == undefined || filme.id_classificacao == null || isNaN(filme.id_classificacao) || filme.id_classificacao <= 0){
+        message.ERROR_BAD_REQUEST.field = '[ID_CLASSIFICACAO] INVÁLIDO'
         return message.ERROR_BAD_REQUEST
     }
 
