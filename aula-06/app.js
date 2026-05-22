@@ -60,57 +60,6 @@ const {
     buscarDiretor,
     excluirDiretor
 } = require('./controller/diretor/controller_diretor.js')
-const { 
-    inserirNovoFilmeAtor,
-    atualizarFilmeAtor,
-    listarFilmeAtor,
-    buscarFilmeAtor,
-    excluirFilmeAtor
-} = require('./controller/filmeAtor/controller_filmeAtor.js')
-const { 
-    inserirNovoFilmeDiretor,
-    atualizarFilmeDiretor,
-    listarFilmeDiretor,
-    buscarFilmeDiretor,
-    excluirFilmeDiretor
-} = require('./controller/filmeDiretor/controller_filmeDiretor.js')
-const { 
-    inserirNovoFilmeGenero,
-    atualizarFilmeGenero,
-    listarFilmeGenero,
-    buscarFilmeGenero,
-    excluirFilmeGenero
-} = require('./controller/filmeGenero/controller_filmeGenero.js')
-const { 
-    inserirNovoAtorAtividade,
-    atualizarAtorAtividade,
-    listarAtorAtividade,
-    buscarAtorAtividade,
-    excluirAtorAtividade
-} = require('./controller/atorAtividade/controller_atorAtividade.js')
-const { 
-    inserirNovoAtorNacionalidade,
-    atualizarAtorNacionalidade,
-    listarAtorNacionalidade,
-    buscarAtorNacionalidade,
-    excluirAtorNacionalidade
-} = require('./controller/atorNacionalidade/controller_atorNacionalidade.js')
-const { 
-    inserirNovoDiretorNacionalidade,
-    atualizarDiretorNacionalidade,
-    listarDiretorNacionalidade,
-    buscarDiretorNacionalidade,
-    excluirDiretorNacionalidade
-} = require('./controller/diretorNacionalidade/controller_diretorNacionalidade.js')
-const { 
-    inserirNovoDiretorAtividade,
-    atualizarDiretorAtividade,
-    listarDiretorAtividade,
-    buscarDiretorAtividade,
-    excluirDiretorAtividade
-} = require('./controller/diretorAtividade/controller_diretorAtividade.js')
-
-
 
 // Criando um objeto para manipular o EXPRESS
 const app = express()
@@ -132,45 +81,175 @@ const bodyParserJSON = bodyParser.json()
 app.use(cors(corsOptions))
 
 const DOC_API = {
-    "project": "Estados e Cidades",
-    "description":"API para manipular dados de Cidades e Estados",
-    "date": "2026-04-29",
-    "version": "1.0.4.26",
-    "developer": "Julio Augusto",
-    "end-points": [
-        {
-            "id": 1,
-            "route 1": '/v1/senai/locadora/filme',
-            "method": 'POST',
-            "description":"Insere um novo filme no banco."
-        },
-        {
-            "id": 2,
-            "route 2": '/v1/senai/locadora/filme',
-            "method": 'GET',
-            "description":"Retorna todos os filmes do banco."
-        },
-        {
-            "id": 3,
-            "route 3": '/v1/senai/locadora/filme/1',
-            "method": 'GET',
-            "description":"Retorna um filme do banco filtrando por id."
-        },
-        {
-            "id": 4,
-            "route 4": '/v1/senai/locadora/filme',
-            "method": 'PUT',
-            "description":"Atualiza um filme existente no banco com o id."
-        },
-        {
-            "id": 5,
-            "route 5": '/v1/senai/locadora/filme',
-            "method": 'DELETE',
-            "description":"Deleta um filme existente no banco com o id."
-        }
-    ]
-}
+    project: "Locadora de Filmes",
+    description: "API para manipular dados da locadora de filmes",
+    date: "2026-04-15",
+    version: "1.0.4.26",
+    developer: "Julio Augusto",
+    endpoints: {
 
+        filme: {
+            POST: {
+                route: "/v1/senai/locadora/filme",
+                description: "Insere um novo filme."
+            },
+            GET_ALL: {
+                route: "/v1/senai/locadora/filme",
+                description: "Retorna todos os filmes."
+            },
+            GET_BY_ID: {
+                route: "/v1/senai/locadora/filme/:id",
+                description: "Retorna um filme pelo ID."
+            },
+            PUT: {
+                route: "/v1/senai/locadora/filme/:id",
+                description: "Atualiza um filme pelo ID."
+            },
+            DELETE: {
+                route: "/v1/senai/locadora/filme/:id",
+                description: "Remove um filme pelo ID."
+            }
+        },
+
+        genero: {
+            POST: {
+                route: "/v1/senai/locadora/genero",
+                description: "Insere um novo gênero."
+            },
+            GET_ALL: {
+                route: "/v1/senai/locadora/genero",
+                description: "Retorna todos os gêneros."
+            },
+            GET_BY_ID: {
+                route: "/v1/senai/locadora/genero/:id",
+                description: "Retorna um gênero pelo ID."
+            },
+            PUT: {
+                route: "/v1/senai/locadora/genero/:id",
+                description: "Atualiza um gênero pelo ID."
+            },
+            DELETE: {
+                route: "/v1/senai/locadora/genero/:id",
+                description: "Remove um gênero pelo ID."
+            }
+        },
+
+        atividade: {
+            POST: {
+                route: "/v1/senai/locadora/atividade",
+                description: "Insere uma nova atividade."
+            },
+            GET_ALL: {
+                route: "/v1/senai/locadora/atividade",
+                description: "Retorna todas as atividades."
+            },
+            GET_BY_ID: {
+                route: "/v1/senai/locadora/atividade/:id",
+                description: "Retorna uma atividade pelo ID."
+            },
+            PUT: {
+                route: "/v1/senai/locadora/atividade/:id",
+                description: "Atualiza uma atividade pelo ID."
+            },
+            DELETE: {
+                route: "/v1/senai/locadora/atividade/:id",
+                description: "Remove uma atividade pelo ID."
+            }
+        },
+
+        nacionalidade: {
+            POST: {
+                route: "/v1/senai/locadora/nacionalidade",
+                description: "Insere uma nova nacionalidade."
+            },
+            GET_ALL: {
+                route: "/v1/senai/locadora/nacionalidade",
+                description: "Retorna todas as nacionalidades."
+            },
+            GET_BY_ID: {
+                route: "/v1/senai/locadora/nacionalidade/:id",
+                description: "Retorna uma nacionalidade pelo ID."
+            },
+            PUT: {
+                route: "/v1/senai/locadora/nacionalidade/:id",
+                description: "Atualiza uma nacionalidade pelo ID."
+            },
+            DELETE: {
+                route: "/v1/senai/locadora/nacionalidade/:id",
+                description: "Remove uma nacionalidade pelo ID."
+            }
+        },
+
+        classificacao: {
+            POST: {
+                route: "/v1/senai/locadora/classificacao",
+                description: "Insere uma nova classificação."
+            },
+            GET_ALL: {
+                route: "/v1/senai/locadora/classificacao",
+                description: "Retorna todas as classificações."
+            },
+            GET_BY_ID: {
+                route: "/v1/senai/locadora/classificacao/:id",
+                description: "Retorna uma classificação pelo ID."
+            },
+            PUT: {
+                route: "/v1/senai/locadora/classificacao/:id",
+                description: "Atualiza uma classificação pelo ID."
+            },
+            DELETE: {
+                route: "/v1/senai/locadora/classificacao/:id",
+                description: "Remove uma classificação pelo ID."
+            }
+        },
+
+        ator: {
+            POST: {
+                route: "/v1/senai/locadora/ator",
+                description: "Insere um novo ator."
+            },
+            GET_ALL: {
+                route: "/v1/senai/locadora/ator",
+                description: "Retorna todos os atores."
+            },
+            GET_BY_ID: {
+                route: "/v1/senai/locadora/ator/:id",
+                description: "Retorna um ator pelo ID."
+            },
+            PUT: {
+                route: "/v1/senai/locadora/ator/:id",
+                description: "Atualiza um ator pelo ID."
+            },
+            DELETE: {
+                route: "/v1/senai/locadora/ator/:id",
+                description: "Remove um ator pelo ID."
+            }
+        },
+
+        diretor: {
+            POST: {
+                route: "/v1/senai/locadora/diretor",
+                description: "Insere um novo diretor."
+            },
+            GET_ALL: {
+                route: "/v1/senai/locadora/diretor",
+                description: "Retorna todos os diretores."
+            },
+            GET_BY_ID: {
+                route: "/v1/senai/locadora/diretor/:id",
+                description: "Retorna um diretor pelo ID."
+            },
+            PUT: {
+                route: "/v1/senai/locadora/diretor/:id",
+                description: "Atualiza um diretor pelo ID."
+            },
+            DELETE: {
+                route: "/v1/senai/locadora/diretor/:id",
+                description: "Remove um diretor pelo ID."
+            }
+        }
+    }
+}
 // Raiz da API
 app.get('/help', (req,res) => {
     res.status(200).json(DOC_API)
@@ -469,302 +548,6 @@ app.delete('/v1/senai/locadora/diretor/:id', async (req,res) => {
     let result = await excluirDiretor(id)
     res.status(result.status_code).json(result)
 })
-
-// ---------------- filmeAtor -----------------
-
-// endpoint para inserir filmeAtor
-app.post('/v1/senai/locadora/filmeAtor',bodyParserJSON, async (req,res) => {
-    // recebe o conteudo dentro do body da requisição
-    let dados = req.body
-    let contentType = req.headers['content-type']
-
-    let result = await inserirNovoFilmeAtor(dados,contentType)
-    res.status(result.status_code).json(result)
-})
-
-// endpoint para retornar todas filmeAtors
-app.get('/v1/senai/locadora/filmeAtor', async (req,res) => {
-    let result = await listarFilmeAtor()
-    res.status(result.status_code).json(result)
-})
-
-// endpoint para buscar um filmeAtor pelo id
-app.get('/v1/senai/locadora/filmeAtor/:id', async (req,res) => {
-    let id = req.params.id
-    let result = await buscarFilmeAtor(id)
-    res.status(result.status_code).json(result)
-})
-
-// endpoint para atualizar uma filmeAtor pelo id
-app.put('/v1/senai/locadora/filmeAtor/:id', bodyParserJSON, async (req,res) => {
-    let id          = req.params.id                 // Recebe o id por parametro
-    let dados       = req.body                      // Recebe os dados do body da requisição
-    let contentType = req.headers['content-type']   // Recebe o ContentType do header da requisição
-    
-    let result      = await atualizarFilmeAtor(dados, id, contentType)
-    res.status(result.status_code).json(result)
-})
-
-// endpoint para deletar uma filmeAtor pelo id
-app.delete('/v1/senai/locadora/filmeAtor/:id', async (req,res) => {
-    let id = req.params.id
-    let result = await excluirFilmeAtor(id)
-    res.status(result.status_code).json(result)
-})
-
-// ---------------- filmeDiretor -----------------
-
-// endpoint para inserir filmeDiretor
-app.post('/v1/senai/locadora/filmeDiretor',bodyParserJSON, async (req,res) => {
-    // recebe o conteudo dentro do body da requisição
-    let dados = req.body
-    let contentType = req.headers['content-type']
-
-    let result = await inserirNovoFilmeDiretor(dados,contentType)
-    res.status(result.status_code).json(result)
-})
-
-// endpoint para retornar todas filmeDiretors
-app.get('/v1/senai/locadora/filmeDiretor', async (req,res) => {
-    let result = await listarFilmeDiretor()
-    res.status(result.status_code).json(result)
-})
-
-// endpoint para buscar um filmeDiretor pelo id
-app.get('/v1/senai/locadora/filmeDiretor/:id', async (req,res) => {
-    let id = req.params.id
-    let result = await buscarFilmeDiretor(id)
-    res.status(result.status_code).json(result)
-})
-
-// endpoint para atualizar uma filmeDiretor pelo id
-app.put('/v1/senai/locadora/filmeDiretor/:id', bodyParserJSON, async (req,res) => {
-    let id          = req.params.id                 // Recebe o id por parametro
-    let dados       = req.body                      // Recebe os dados do body da requisição
-    let contentType = req.headers['content-type']   // Recebe o ContentType do header da requisição
-    
-    let result      = await atualizarFilmeDiretor(dados, id, contentType)
-    res.status(result.status_code).json(result)
-})
-
-// endpoint para deletar uma filmeDiretor pelo id
-app.delete('/v1/senai/locadora/filmeDiretor/:id', async (req,res) => {
-    let id = req.params.id
-    let result = await excluirFilmeDiretor(id)
-    res.status(result.status_code).json(result)
-})
-
-// ---------------- filmeGenero -----------------
-
-// endpoint para inserir filmeGenero
-app.post('/v1/senai/locadora/filmeGenero',bodyParserJSON, async (req,res) => {
-    // recebe o conteudo dentro do body da requisição
-    let dados = req.body
-    let contentType = req.headers['content-type']
-
-    let result = await inserirNovoFilmeGenero(dados,contentType)
-    res.status(result.status_code).json(result)
-})
-
-// endpoint para retornar todas filmeGenero
-app.get('/v1/senai/locadora/filmeGenero', async (req,res) => {
-    let result = await listarFilmeGenero()
-    res.status(result.status_code).json(result)
-})
-
-// endpoint para buscar um filmeGenero pelo id
-app.get('/v1/senai/locadora/filmeGenero/:id', async (req,res) => {
-    let id = req.params.id
-    let result = await buscarFilmeGenero(id)
-    res.status(result.status_code).json(result)
-})
-
-// endpoint para atualizar um filmeGenero pelo id
-app.put('/v1/senai/locadora/filmeGenero/:id', bodyParserJSON, async (req,res) => {
-    let id          = req.params.id                 // Recebe o id por parametro
-    let dados       = req.body                      // Recebe os dados do body da requisição
-    let contentType = req.headers['content-type']   // Recebe o ContentType do header da requisição
-    
-    let result      = await atualizarFilmeGenero(dados, id, contentType)
-    res.status(result.status_code).json(result)
-})
-
-// endpoint para deletar um filmeGenero pelo id
-app.delete('/v1/senai/locadora/filmeGenero/:id', async (req,res) => {
-    let id = req.params.id
-    let result = await excluirFilmeGenero(id)
-    res.status(result.status_code).json(result)
-})
-
-// ---------------- diretorNacionalidade -----------------
-
-// endpoint para inserir diretorNacionalidade
-app.post('/v1/senai/locadora/diretorNacionalidade',bodyParserJSON, async (req,res) => {
-    // recebe o conteudo dentro do body da requisição
-    let dados = req.body
-    let contentType = req.headers['content-type']
-
-    let result = await inserirNovoDiretorNacionalidade(dados,contentType)
-    res.status(result.status_code).json(result)
-})
-
-// endpoint para retornar todas diretorNacionalidade
-app.get('/v1/senai/locadora/diretorNacionalidade', async (req,res) => {
-    let result = await listarDiretorNacionalidade()
-    res.status(result.status_code).json(result)
-})
-
-// endpoint para buscar um diretorNacionalidade pelo id
-app.get('/v1/senai/locadora/diretorNacionalidade/:id', async (req,res) => {
-    let id = req.params.id
-    let result = await buscarDiretorNacionalidade(id)
-    res.status(result.status_code).json(result)
-})
-
-// endpoint para atualizar um diretorNacionalidade pelo id
-app.put('/v1/senai/locadora/diretorNacionalidade/:id', bodyParserJSON, async (req,res) => {
-    let id          = req.params.id                 // Recebe o id por parametro
-    let dados       = req.body                      // Recebe os dados do body da requisição
-    let contentType = req.headers['content-type']   // Recebe o ContentType do header da requisição
-    
-    let result      = await atualizarDiretorNacionalidade(dados, id, contentType)
-    res.status(result.status_code).json(result)
-})
-
-// endpoint para deletar um diretorNacionalidade pelo id
-app.delete('/v1/senai/locadora/diretorNacionalidade/:id', async (req,res) => {
-    let id = req.params.id
-    let result = await excluirDiretorNacionalidade(id)
-    res.status(result.status_code).json(result)
-})
-
-// ---------------- diretorAtividade -----------------
-
-// endpoint para inserir diretorAtividade
-app.post('/v1/senai/locadora/diretorAtividade',bodyParserJSON, async (req,res) => {
-    // recebe o conteudo dentro do body da requisição
-    let dados = req.body
-    let contentType = req.headers['content-type']
-
-    let result = await inserirNovoDiretorAtividade(dados,contentType)
-    res.status(result.status_code).json(result)
-})
-
-// endpoint para retornar todas diretorAtividade
-app.get('/v1/senai/locadora/diretorAtividade', async (req,res) => {
-    let result = await listarDiretorAtividade()
-    res.status(result.status_code).json(result)
-})
-
-// endpoint para buscar um diretorAtividade pelo id
-app.get('/v1/senai/locadora/diretorAtividade/:id', async (req,res) => {
-    let id = req.params.id
-    let result = await buscarDiretorAtividade(id)
-    res.status(result.status_code).json(result)
-})
-
-// endpoint para atualizar um diretorAtividade pelo id
-app.put('/v1/senai/locadora/diretorAtividade/:id', bodyParserJSON, async (req,res) => {
-    let id          = req.params.id                 // Recebe o id por parametro
-    let dados       = req.body                      // Recebe os dados do body da requisição
-    let contentType = req.headers['content-type']   // Recebe o ContentType do header da requisição
-    
-    let result      = await atualizarDiretorAtividade(dados, id, contentType)
-    res.status(result.status_code).json(result)
-})
-
-// endpoint para deletar um diretorAtividade pelo id
-app.delete('/v1/senai/locadora/diretorAtividade/:id', async (req,res) => {
-    let id = req.params.id
-    let result = await excluirDiretorAtividade(id)
-    res.status(result.status_code).json(result)
-})
-
-// ---------------- atorNacionalidade -----------------
-
-// endpoint para inserir atorNacionalidade
-app.post('/v1/senai/locadora/atorNacionalidade',bodyParserJSON, async (req,res) => {
-    // recebe o conteudo dentro do body da requisição
-    let dados = req.body
-    let contentType = req.headers['content-type']
-
-    let result = await inserirNovoAtorNacionalidade(dados,contentType)
-    res.status(result.status_code).json(result)
-})
-
-// endpoint para retornar todas atorNacionalidade
-app.get('/v1/senai/locadora/atorNacionalidade', async (req,res) => {
-    let result = await listarAtorNacionalidade()
-    res.status(result.status_code).json(result)
-})
-
-// endpoint para buscar um atorNacionalidade pelo id
-app.get('/v1/senai/locadora/atorNacionalidade/:id', async (req,res) => {
-    let id = req.params.id
-    let result = await buscarAtorNacionalidade(id)
-    res.status(result.status_code).json(result)
-})
-
-// endpoint para atualizar um atorNacionalidade pelo id
-app.put('/v1/senai/locadora/atorNacionalidade/:id', bodyParserJSON, async (req,res) => {
-    let id          = req.params.id                 // Recebe o id por parametro
-    let dados       = req.body                      // Recebe os dados do body da requisição
-    let contentType = req.headers['content-type']   // Recebe o ContentType do header da requisição
-    
-    let result      = await atualizarAtorNacionalidade(dados, id, contentType)
-    res.status(result.status_code).json(result)
-})
-
-// endpoint para deletar um atorNacionalidade pelo id
-app.delete('/v1/senai/locadora/atorNacionalidade/:id', async (req,res) => {
-    let id = req.params.id
-    let result = await excluirAtorNacionalidade(id)
-    res.status(result.status_code).json(result)
-})
-
-// ---------------- atorAtividade -----------------
-
-// endpoint para inserir atorAtividade
-app.post('/v1/senai/locadora/atorAtividade',bodyParserJSON, async (req,res) => {
-    // recebe o conteudo dentro do body da requisição
-    let dados = req.body
-    let contentType = req.headers['content-type']
-
-    let result = await inserirNovoAtorAtividade(dados,contentType)
-    res.status(result.status_code).json(result)
-})
-
-// endpoint para retornar todas atorAtividade
-app.get('/v1/senai/locadora/atorAtividade', async (req,res) => {
-    let result = await listarAtorAtividade()
-    res.status(result.status_code).json(result)
-})
-
-// endpoint para buscar um atorAtividade pelo id
-app.get('/v1/senai/locadora/atorAtividade/:id', async (req,res) => {
-    let id = req.params.id
-    let result = await buscarAtorAtividade(id)
-    res.status(result.status_code).json(result)
-})
-
-// endpoint para atualizar um atorAtividade pelo id
-app.put('/v1/senai/locadora/atorAtividade/:id', bodyParserJSON, async (req,res) => {
-    let id          = req.params.id                 // Recebe o id por parametro
-    let dados       = req.body                      // Recebe os dados do body da requisição
-    let contentType = req.headers['content-type']   // Recebe o ContentType do header da requisição
-    
-    let result      = await atualizarAtorAtividade(dados, id, contentType)
-    res.status(result.status_code).json(result)
-})
-
-// endpoint para deletar um atorAtividade pelo id
-app.delete('/v1/senai/locadora/atorAtividade/:id', async (req,res) => {
-    let id = req.params.id
-    let result = await excluirAtorAtividade(id)
-    res.status(result.status_code).json(result)
-})
-
-
 
 // Serve para inicializar a API para receber requisições
 app.listen(port, () => {

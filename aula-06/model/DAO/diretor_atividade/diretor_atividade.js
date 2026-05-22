@@ -79,10 +79,50 @@ const deleteDiretorAtividade = async (id) => {
     return false
 }
 
+// select de todos Diretores buscando pelo id do atividade
+const selectDiretoresByIdAtividade = async (idAtividade) => {
+    let sql = `SELECT tbl_diretor.*
+               FROM tbl_atividade
+                    INNER JOIN tbl_diretor_atividade
+                        ON tbl_atividade.id = tbl_diretor_atividade.id_atividade
+                    INNER JOIN tbl_diretor
+                        ON tbl_diretor.id = tbl_diretor_atividade.id_diretor
+               WHERE tbl_atividade.id = ${idAtividade}`
+    try {
+        let response = await knexConex.raw(sql)
+
+        if(response) return response[0]
+        
+    } catch (error) {console.log(error)}
+
+    return false
+}
+
+// select de todas atividades buscando pelo id do diretor
+const selectAtividadesByIdDiretor = async (idDiretor) => {
+    let sql = `SELECT tbl_atividade.*
+               FROM tbl_atividade
+                    INNER JOIN tbl_diretor_atividade
+                        ON tbl_atividade.id = tbl_diretor_atividade.id_atividade
+                    INNER JOIN tbl_diretor
+                        ON tbl_diretor.id = tbl_diretor_atividade.id_diretor
+               WHERE tbl_diretor.id = ${idDiretor}`
+    try {
+        let response = await knexConex.raw(sql)
+
+        if(response) return response[0]
+        
+    } catch (error) {console.log(error)}
+
+    return false
+}
+
 module.exports = {
     insertDiretorAtividade,
     updateDiretorAtividade,
     selectAllDiretorAtividade,
     selectByIdDiretorAtividade,
-    deleteDiretorAtividade
+    deleteDiretorAtividade,
+    selectDiretoresByIdAtividade,
+    selectAtividadesByIdDiretor
 }

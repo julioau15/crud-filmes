@@ -6,23 +6,15 @@
  * *******************************************************************************************************/
 
 const config_message = require('../module/configMessages.js')
-const atorNacionalidadeDAO = require('../../model/DAO/atorNacionalidade/atorNacionalidade.js')
-const controllerNacionalidade = require('../nacionalidade/controller_nacionalidade.js')
-const controllerAtor = require('../ator/controller_ator.js')
+const atorNacionalidadeDAO = require('../../model/DAO/ator_nacionalidade/ator_nacionalidade.js')
 
 // inserir novo atorNacionalidade
 const inserirNovoAtorNacionalidade = async (atorNacionalidade, contentType) => {
     let message = JSON.parse(JSON.stringify(config_message))
     try {
 
-        // Valida se o formato de dados é JSON
-        if(String(contentType).toLowerCase() != 'application/json') return message.ERROR_CONTENT_TYPE // Status code 415
-
-        let nacionalidade = await controllerNacionalidade.buscarNacionalidade(atorNacionalidade.id_nacionalidade)
-        if(!nacionalidade.status) return nacionalidade
-
-        let ator = await controllerAtor.buscarAtor(atorNacionalidade.id_ator)
-        if(!ator.status) return ator
+        let validar = await validarDados(atorNacionalidade, contentType)
+        if(validar) return validar
 
         let result = await atorNacionalidadeDAO.insertAtorNacionalidade(atorNacionalidade)
 
@@ -40,22 +32,14 @@ const atualizarAtorNacionalidade = async (atorNacionalidade, id, contentType) =>
     let message = JSON.parse(JSON.stringify(config_message))
 
     try {
-        // Valida se o formato de dados é JSON
-        if(String(contentType).toLowerCase() != 'application/json') return message.ERROR_CONTENT_TYPE // Status code 415
-
-        let nacionalidade = await controllerNacionalidade.buscarNacionalidade(atorNacionalidade.id_nacionalidade)
-        if(!nacionalidade.status) return nacionalidade
-
-        let ator = await controllerAtor.buscarAtor(atorNacionalidade.id_ator)
-        if(!ator.status) return ator
+        let validar = await validarDados(atorNacionalidade, contentType)
+        if(validar) return validar
 
         let resultBuscarId = await buscarAtorNacionalidade(id)
         if(!resultBuscarId.status) return resultBuscarId // 400 e 404
 
         atorNacionalidade.id = Number(id)
         let result = await atorNacionalidadeDAO.updateAtorNacionalidade(atorNacionalidade)
-        result.nacionalidade = nacionalidade.response.nacionalidade
-        result.ator = ator.response.ator
 
         if(!result) return message.ERROR_INTERNAL_SERVER_MODEL // 500
 
@@ -76,20 +60,6 @@ const listarAtorNacionalidade = async () => {
 
         // verfica se o array é vazio
         if(result.length <= 0) return message.ERROR_NOT_FOUND // status_code 404
-
-        for(const atorNacionalidade of result){
-            let nacionalidade = await controllerNacionalidade.buscarNacionalidade(atorNacionalidade.id_nacionalidade)
-            let ator = await controllerAtor.buscarAtor(atorNacionalidade.id_ator)
-
-            if(nacionalidade.status){
-                atorNacionalidade.nacionalidade = nacionalidade.response.nacionalidade
-                delete atorNacionalidade.id_nacionalidade
-            }
-            if(ator.status) {
-                atorNacionalidade.ator = ator.response.ator
-                delete atorNacionalidade.id_ator
-            }
-        }
 
         let listarAtorNacionalidadeMessage = await montarMensagem(message, message.SUCESS_RESPONSE, result)
         message.DEFAULT_MESSAGE.response.count = result.length
@@ -114,20 +84,6 @@ const buscarAtorNacionalidade = async (id) => {
         if(!result) return message.ERROR_INTERNAL_SERVER_MODEL // 500
 
         if(result.length < 1) return config_message.ERROR_NOT_FOUND
-
-        for(const atorNacionalidade of result){
-            let nacionalidade = await controllerNacionalidade.buscarNacionalidade(atorNacionalidade.id_nacionalidade)
-            let ator = await controllerAtor.buscarAtor(atorNacionalidade.id_ator)
-
-            if(nacionalidade.status){
-                atorNacionalidade.nacionalidade = nacionalidade.response.nacionalidade
-                delete atorNacionalidade.id_nacionalidade
-            }
-            if(ator.status) {
-                atorNacionalidade.ator = ator.response.ator
-                delete atorNacionalidade.id_ator
-            }
-        }
 
         return await montarMensagem(message, message.SUCESS_RESPONSE, result)
 
@@ -165,6 +121,25 @@ const validarId = async (id) => {
     return false
 }
 
+const validarDados = async (atorNacionalidade, contentType) => {
+    let message = JSON.parse(JSON.stringify(config_message))
+
+     // Valida se o formato de dados é JSON
+    if(String(contentType).toLowerCase() != 'application/json') return message.ERROR_CONTENT_TYPE // Status code 415
+    
+    if(atorNacionalidade.id_ator == undefined || atorNacionalidade.id_ator == '' || atorNacionalidade.id_ator == null || atorNacionalidade.id_ator <= 0 || isNaN(atorNacionalidade.id_ator)){
+        message.ERROR_BAD_REQUEST.field = '[ID_ATOR] INVÁLIDO'
+        return message.ERROR_BAD_REQUEST // 400
+    }
+
+    if(atorNacionalidade.id_nacionalidade == undefined || atorNacionalidade.id_nacionalidade == '' || atorNacionalidade.id_nacionalidade == null || atorNacionalidade.id_nacionalidade <= 0 || isNaN(atorNacionalidade.id_nacionalidade)){
+        message.ERROR_BAD_REQUEST.field = '[ID_NACIONALIDADE] INVÁLIDO'
+        return message.ERROR_BAD_REQUEST // 400
+    }
+
+    return false
+}
+
 const montarMensagem = async (base,status,response = null) => {
     base.DEFAULT_MESSAGE.status = status.status
     base.DEFAULT_MESSAGE.status_code = status.status_code
@@ -174,7 +149,6 @@ const montarMensagem = async (base,status,response = null) => {
 
     return base.DEFAULT_MESSAGE // 200 ou 201
 }
-
 
 module.exports = {
     inserirNovoAtorNacionalidade,

@@ -19,7 +19,7 @@ const insertFilmeGenero = async (filmeGenero) => {
 
         if(response) return response[0].insertId 
 
-    } catch (error) {}
+    } catch (error) {console.log(error)}
 
     return false
 }
@@ -35,7 +35,7 @@ const updateFilmeGenero = async (filmeGenero) => {
 
         if(response) return response
 
-    } catch (error) {}
+    } catch (error) {console.log(error)}
 
     return false
 }
@@ -47,7 +47,7 @@ const selectAllFilmeGenero = async () => {
 
         if(response) return response[0]
  
-    } catch (error) {}
+    } catch (error) {console.log(error)}
 
     return false
 }
@@ -61,7 +61,7 @@ const selectByIdFilmeGenero = async (id) => {
 
         if(response) return response[0]
         
-    } catch (error) {}
+    } catch (error) {console.log(error)}
 
     return false
 }
@@ -74,7 +74,45 @@ const deleteFilmeGenero = async (id) => {
 
         if(response) return response
  
-    } catch (error) {}
+    } catch (error) {console.log(error)}
+
+    return false
+}
+
+// select de todos filmes buscando pelo id do genero
+const selectFilmesByIdGenero = async (idGenero) => {
+    let sql = `SELECT tbl_filme.*
+               FROM tbl_filme
+                    INNER JOIN tbl_filme_genero
+                        ON tbl_filme.id = tbl_filme_genero.id_filme
+                    INNER JOIN tbl_genero
+                        ON tbl_genero.id = tbl_filme_genero.id_genero
+               WHERE tbl_genero.id = ${idGenero}`
+    try {
+        let response = await knexConex.raw(sql)
+
+        if(response) return response[0]
+        
+    } catch (error) {console.log(error)}
+
+    return false
+}
+
+// select de todos generos buscando pelo id do filme
+const selectGenerosByIdFilme = async (idFilme) => {
+    let sql = `SELECT tbl_genero.*
+               FROM tbl_filme
+                    INNER JOIN tbl_filme_genero
+                        ON tbl_filme.id = tbl_filme_genero.id_filme
+                    INNER JOIN tbl_genero
+                        ON tbl_genero.id = tbl_filme_genero.id_genero
+               WHERE tbl_filme.id = ${idFilme}`
+    try {
+        let response = await knexConex.raw(sql)
+
+        if(response) return response[0]
+        
+    } catch (error) {console.log(error)}
 
     return false
 }
@@ -84,5 +122,7 @@ module.exports = {
     updateFilmeGenero,
     selectAllFilmeGenero,
     selectByIdFilmeGenero,
-    deleteFilmeGenero
+    deleteFilmeGenero,
+    selectFilmesByIdGenero,
+    selectGenerosByIdFilme
 }

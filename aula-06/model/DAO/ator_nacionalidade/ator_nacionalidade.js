@@ -79,10 +79,50 @@ const deleteAtorNacionalidade = async (id) => {
     return false
 }
 
+// select de todos atores buscando pelo id do nacionalidade
+const selectAtoresByIdNacionalidade = async (idNacionalidade) => {
+    let sql = `SELECT tbl_ator.*
+               FROM tbl_nacionalidade
+                    INNER JOIN tbl_ator_nacionalidade
+                        ON tbl_nacionalidade.id = tbl_ator_nacionalidade.id_nacionalidade
+                    INNER JOIN tbl_ator
+                        ON tbl_ator.id = tbl_ator_nacionalidade.id_ator
+               WHERE tbl_nacionalidade.id = ${idNacionalidade}`
+    try {
+        let response = await knexConex.raw(sql)
+
+        if(response) return response[0]
+        
+    } catch (error) {console.log(error)}
+
+    return false
+}
+
+// select de todas nacionalidades buscando pelo id do ator
+const selectNacionalidadesByIdAtor = async (idAtor) => {
+    let sql = `SELECT tbl_nacionalidade.*
+               FROM tbl_nacionalidade
+                    INNER JOIN tbl_ator_nacionalidade
+                        ON tbl_nacionalidade.id = tbl_ator_nacionalidade.id_nacionalidade
+                    INNER JOIN tbl_ator
+                        ON tbl_ator.id = tbl_ator_nacionalidade.id_ator
+               WHERE tbl_ator.id = ${idAtor}`
+    try {
+        let response = await knexConex.raw(sql)
+
+        if(response) return response[0]
+        
+    } catch (error) {console.log(error)}
+
+    return false
+}
+
 module.exports = {
     insertAtorNacionalidade,
     updateAtorNacionalidade,
     selectAllAtorNacionalidade,
     selectByIdAtorNacionalidade,
-    deleteAtorNacionalidade
+    deleteAtorNacionalidade,
+    selectAtoresByIdNacionalidade,
+    selectNacionalidadesByIdAtor
 }

@@ -6,23 +6,15 @@
  * *******************************************************************************************************/
 
 const config_message = require('../module/configMessages.js')
-const filmeDiretorDAO = require('../../model/DAO/filmeDiretor/filmeDiretor.js')
-const controllerFilme = require('../filme/controller_filme.js')
-const controllerDiretor = require('../diretor/controller_diretor.js')
+const filmeDiretorDAO = require('../../model/DAO/filme_diretor/filme_diretor.js')
 
 // inserir novo filmeDiretor
 const inserirNovoFilmeDiretor = async (filmeDiretor, contentType) => {
     let message = JSON.parse(JSON.stringify(config_message))
     try {
 
-        // Valida se o formato de dados é JSON
-        if(String(contentType).toLowerCase() != 'application/json') return message.ERROR_CONTENT_TYPE // Status code 415
-
-        let filme = await controllerFilme.buscarFilme(filmeDiretor.id_filme)
-        if(!filme.status) return filme
-
-        let diretor = await controllerDiretor.buscarDiretor(filmeDiretor.id_diretor)
-        if(!diretor.status) return diretor
+        let validar = await validarDados(filmeDiretor, contentType)
+        if(validar) return validar
 
         let result = await filmeDiretorDAO.insertFilmeDiretor(filmeDiretor)
 
@@ -40,22 +32,14 @@ const atualizarFilmeDiretor = async (filmeDiretor, id, contentType) => {
     let message = JSON.parse(JSON.stringify(config_message))
 
     try {
-        // Valida se o formato de dados é JSON
-        if(String(contentType).toLowerCase() != 'application/json') return message.ERROR_CONTENT_TYPE // Status code 415
-
-        let filme = await controllerFilme.buscarFilme(filmeDiretor.id_filme)
-        if(!filme.status) return filme
-
-        let diretor = await controllerDiretor.buscarDiretor(filmeDiretor.id_diretor)
-        if(!diretor.status) return diretor
+        let validar = await validarDados(filmeDiretor, contentType)
+        if(validar) return validar
 
         let resultBuscarId = await buscarFilmeDiretor(id)
         if(!resultBuscarId.status) return resultBuscarId // 400 e 404
 
         filmeDiretor.id = Number(id)
         let result = await filmeDiretorDAO.updateFilmeDiretor(filmeDiretor)
-        result.filme = filme.response.filme
-        result.diretor = diretor.response.diretor
 
         if(!result) return message.ERROR_INTERNAL_SERVER_MODEL // 500
 
@@ -76,20 +60,6 @@ const listarFilmeDiretor = async () => {
 
         // verfica se o array é vazio
         if(result.length <= 0) return message.ERROR_NOT_FOUND // status_code 404
-
-        for(const filmeDiretor of result){
-            let filme = await controllerFilme.buscarFilme(filmeDiretor.id_filme)
-            let diretor = await controllerDiretor.buscarDiretor(filmeDiretor.id_diretor)
-
-            if(filme.status){
-                filmeDiretor.filme = filme.response.filme
-                delete filmeDiretor.id_filme
-            }
-            if(diretor.status) {
-                filmeDiretor.diretor = diretor.response.diretor
-                delete filmeDiretor.id_diretor
-            }
-        }
 
         let listarFilmeDiretorMessage = await montarMensagem(message, message.SUCESS_RESPONSE, result)
         message.DEFAULT_MESSAGE.response.count = result.length
@@ -114,20 +84,6 @@ const buscarFilmeDiretor = async (id) => {
         if(!result) return message.ERROR_INTERNAL_SERVER_MODEL // 500
 
         if(result.length < 1) return config_message.ERROR_NOT_FOUND
-
-        for(const filmeDiretor of result){
-            let filme = await controllerFilme.buscarFilme(filmeDiretor.id_filme)
-            let diretor = await controllerDiretor.buscarDiretor(filmeDiretor.id_diretor)
-
-            if(filme.status){
-                filmeDiretor.filme = filme.response.filme
-                delete filmeDiretor.id_filme
-            }
-            if(diretor.status) {
-                filmeDiretor.diretor = diretor.response.diretor
-                delete filmeDiretor.id_diretor
-            }
-        }
 
         return await montarMensagem(message, message.SUCESS_RESPONSE, result)
 
@@ -165,6 +121,25 @@ const validarId = async (id) => {
     return false
 }
 
+const validarDados = async (filmeDiretor, contentType) => {
+    let message = JSON.parse(JSON.stringify(config_message))
+
+     // Valida se o formato de dados é JSON
+    if(String(contentType).toLowerCase() != 'application/json') return message.ERROR_CONTENT_TYPE // Status code 415
+    
+    if(filmeDiretor.id_filme == undefined || filmeDiretor.id_filme == '' || filmeDiretor.id_filme == null || filmeDiretor.id_filme <= 0 || isNaN(filmeDiretor.id_filme)){
+        message.ERROR_BAD_REQUEST.field = '[ID_FILME] INVÁLIDO'
+        return message.ERROR_BAD_REQUEST // 400
+    }
+
+    if(filmeDiretor.id_diretor == undefined || filmeDiretor.id_diretor == '' || filmeDiretor.id_diretor == null || filmeDiretor.id_diretor <= 0 || isNaN(filmeDiretor.id_diretor)){
+        message.ERROR_BAD_REQUEST.field = '[ID_DIRETOR] INVÁLIDO'
+        return message.ERROR_BAD_REQUEST // 400
+    }
+
+    return false
+}
+
 const montarMensagem = async (base,status,response = null) => {
     base.DEFAULT_MESSAGE.status = status.status
     base.DEFAULT_MESSAGE.status_code = status.status_code
@@ -174,7 +149,6 @@ const montarMensagem = async (base,status,response = null) => {
 
     return base.DEFAULT_MESSAGE // 200 ou 201
 }
-
 
 module.exports = {
     inserirNovoFilmeDiretor,

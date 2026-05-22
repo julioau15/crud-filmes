@@ -6,23 +6,15 @@
  * *******************************************************************************************************/
 
 const config_message = require('../module/configMessages.js')
-const diretorNacionalidadeDAO = require('../../model/DAO/diretorNacionalidade/diretorNacionalidade.js')
-const controllernacionalidade = require('../nacionalidade/controller_nacionalidade.js')
-const controllerdiretor = require('../diretor/controller_diretor.js')
+const diretorNacionalidadeDAO = require('../../model/DAO/diretor_nacionalidade/diretor_nacionalidade.js')
 
 // inserir novo diretorNacionalidade
 const inserirNovoDiretorNacionalidade = async (diretorNacionalidade, contentType) => {
     let message = JSON.parse(JSON.stringify(config_message))
     try {
 
-        // Valida se o formato de dados é JSON
-        if(String(contentType).toLowerCase() != 'application/json') return message.ERROR_CONTENT_TYPE // Status code 415
-
-        let nacionalidade = await controllernacionalidade.buscarNacionalidade(diretorNacionalidade.id_nacionalidade)
-        if(!nacionalidade.status) return nacionalidade
-
-        let diretor = await controllerdiretor.buscarDiretor(diretorNacionalidade.id_diretor)
-        if(!diretor.status) return diretor
+        let validar = await validarDados(diretorNacionalidade, contentType)
+        if(validar) return validar
 
         let result = await diretorNacionalidadeDAO.insertDiretorNacionalidade(diretorNacionalidade)
 
@@ -40,22 +32,14 @@ const atualizarDiretorNacionalidade = async (diretorNacionalidade, id, contentTy
     let message = JSON.parse(JSON.stringify(config_message))
 
     try {
-        // Valida se o formato de dados é JSON
-        if(String(contentType).toLowerCase() != 'application/json') return message.ERROR_CONTENT_TYPE // Status code 415
-
-        let nacionalidade = await controllernacionalidade.buscarNacionalidade(diretorNacionalidade.id_nacionalidade)
-        if(!nacionalidade.status) return nacionalidade
-
-        let diretor = await controllerdiretor.buscarDiretor(diretorNacionalidade.id_diretor)
-        if(!diretor.status) return diretor
+        let validar = await validarDados(diretorNacionalidade, contentType)
+        if(validar) return validar
 
         let resultBuscarId = await buscarDiretorNacionalidade(id)
         if(!resultBuscarId.status) return resultBuscarId // 400 e 404
 
         diretorNacionalidade.id = Number(id)
         let result = await diretorNacionalidadeDAO.updateDiretorNacionalidade(diretorNacionalidade)
-        result.nacionalidade = nacionalidade.response.nacionalidade
-        result.diretor = diretor.response.diretor
 
         if(!result) return message.ERROR_INTERNAL_SERVER_MODEL // 500
 
@@ -76,20 +60,6 @@ const listarDiretorNacionalidade = async () => {
 
         // verfica se o array é vazio
         if(result.length <= 0) return message.ERROR_NOT_FOUND // status_code 404
-
-        for(const diretorNacionalidade of result){
-            let nacionalidade = await controllernacionalidade.buscarNacionalidade(diretorNacionalidade.id_nacionalidade)
-            let diretor = await controllerdiretor.buscarDiretor(diretorNacionalidade.id_diretor)
-
-            if(nacionalidade.status){
-                diretorNacionalidade.nacionalidade = nacionalidade.response.nacionalidade
-                delete diretorNacionalidade.id_nacionalidade
-            }
-            if(diretor.status) {
-                diretorNacionalidade.diretor = diretor.response.diretor
-                delete diretorNacionalidade.id_diretor
-            }
-        }
 
         let listarDiretorNacionalidadeMessage = await montarMensagem(message, message.SUCESS_RESPONSE, result)
         message.DEFAULT_MESSAGE.response.count = result.length
@@ -114,20 +84,6 @@ const buscarDiretorNacionalidade = async (id) => {
         if(!result) return message.ERROR_INTERNAL_SERVER_MODEL // 500
 
         if(result.length < 1) return config_message.ERROR_NOT_FOUND
-
-        for(const diretorNacionalidade of result){
-            let nacionalidade = await controllernacionalidade.buscarNacionalidade(diretorNacionalidade.id_nacionalidade)
-            let diretor = await controllerdiretor.buscarDiretor(diretorNacionalidade.id_diretor)
-
-            if(nacionalidade.status){
-                diretorNacionalidade.nacionalidade = nacionalidade.response.nacionalidade
-                delete diretorNacionalidade.id_nacionalidade
-            }
-            if(diretor.status) {
-                diretorNacionalidade.diretor = diretor.response.diretor
-                delete diretorNacionalidade.id_diretor
-            }
-        }
 
         return await montarMensagem(message, message.SUCESS_RESPONSE, result)
 
@@ -165,6 +121,25 @@ const validarId = async (id) => {
     return false
 }
 
+const validarDados = async (diretorNacionalidade, contentType) => {
+    let message = JSON.parse(JSON.stringify(config_message))
+
+     // Valida se o formato de dados é JSON
+    if(String(contentType).toLowerCase() != 'application/json') return message.ERROR_CONTENT_TYPE // Status code 415
+    
+    if(diretorNacionalidade.id_diretor == undefined || diretorNacionalidade.id_diretor == '' || diretorNacionalidade.id_diretor == null || diretorNacionalidade.id_diretor <= 0 || isNaN(diretorNacionalidade.id_diretor)){
+        message.ERROR_BAD_REQUEST.field = '[ID_DIRETOR] INVÁLIDO'
+        return message.ERROR_BAD_REQUEST // 400
+    }
+
+    if(diretorNacionalidade.id_nacionalidade == undefined || diretorNacionalidade.id_nacionalidade == '' || diretorNacionalidade.id_nacionalidade == null || diretorNacionalidade.id_nacionalidade <= 0 || isNaN(diretorNacionalidade.id_nacionalidade)){
+        message.ERROR_BAD_REQUEST.field = '[ID_NACIONALIDADE] INVÁLIDO'
+        return message.ERROR_BAD_REQUEST // 400
+    }
+
+    return false
+}
+
 const montarMensagem = async (base,status,response = null) => {
     base.DEFAULT_MESSAGE.status = status.status
     base.DEFAULT_MESSAGE.status_code = status.status_code
@@ -174,7 +149,6 @@ const montarMensagem = async (base,status,response = null) => {
 
     return base.DEFAULT_MESSAGE // 200 ou 201
 }
-
 
 module.exports = {
     inserirNovoDiretorNacionalidade,

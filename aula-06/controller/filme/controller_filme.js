@@ -13,6 +13,7 @@ const filmeDAO = require('../../model/DAO/filme/filme.js')
 
 // Import de arquivos de Controller
 const controllerClassificacao = require('../classificacao/controller_classificacao.js')
+const controller_filme_genero = require('./controller_filme_genero.js')
 
 // Função para inserir um novo filme
 const inserirNovoFilme = async (filme, contentType) => {
@@ -29,6 +30,17 @@ const inserirNovoFilme = async (filme, contentType) => {
         if(!result) return message.ERROR_INTERNAL_SERVER_MODEL // Status code 500
         
         filme.id = Number(result)
+
+        // Manipulação de dados para inserir os generos do filme
+        for(genero of filme.genero){
+            // Cria o objeto JSON com os Ids do filme e dos generos
+            let filmeGenero = { "id_filme": filme.id, "id_genero": genero.id}
+            // chama a controler
+            let resultInsertGenero = await controller_filme_genero.inserirNovoFilmeGenero(filmeGenero, contentType)
+
+            if(!resultInsertGenero.status)  return message.SUCESS_CREATED_ITEM_WARNING // 201
+        }
+
         return await montarMensagem(message, message.SUCESS_CREATED_ITEM, filme) // 201
     
     } catch (error) {console.log(error)}
@@ -79,6 +91,11 @@ const listarFilme = async () => {
                 filme.classificacao = classificacao.response.classificacao
                 delete filme.id_classificacao
             }
+
+            let genero = await controller_filme_genero.buscarGeneroIdFilme(filme.id)
+            if(genero.status){
+                filme.genero = genero.response.filmeGenero
+            }
         }
 
         let listarFilmeMessage = await montarMensagem(message, message.SUCESS_RESPONSE, result)
@@ -110,6 +127,11 @@ const buscarFilme = async (id) => {
             if(classificacao.status) {
                 filme.classificacao = classificacao.response.classificacao
                 delete filme.id_classificacao
+            }
+
+            let genero = await controller_filme_genero.buscarGeneroIdFilme(filme.id)
+            if(genero.status){
+                filme.genero = genero.response.filmeGenero
             }
         }
 

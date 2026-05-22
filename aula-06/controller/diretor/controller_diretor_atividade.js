@@ -6,23 +6,15 @@
  * *******************************************************************************************************/
 
 const config_message = require('../module/configMessages.js')
-const diretorAtividadeDAO = require('../../model/DAO/diretorAtividade/diretorAtividade.js')
-const controllerAtividade = require('../atividade/controller_atividade.js')
-const controllerdiretor = require('../diretor/controller_diretor.js')
+const diretorAtividadeDAO = require('../../model/DAO/diretor_atividade/diretor_atividade.js')
 
 // inserir novo diretorAtividade
 const inserirNovoDiretorAtividade = async (diretorAtividade, contentType) => {
     let message = JSON.parse(JSON.stringify(config_message))
     try {
 
-        // Valida se o formato de dados é JSON
-        if(String(contentType).toLowerCase() != 'application/json') return message.ERROR_CONTENT_TYPE // Status code 415
-
-        let atividade = await controllerAtividade.buscarAtividade(diretorAtividade.id_atividade)
-        if(!atividade.status) return atividade
-
-        let diretor = await controllerdiretor.buscarDiretor(diretorAtividade.id_diretor)
-        if(!diretor.status) return diretor
+        let validar = await validarDados(diretorAtividade, contentType)
+        if(validar) return validar
 
         let result = await diretorAtividadeDAO.insertDiretorAtividade(diretorAtividade)
 
@@ -40,22 +32,14 @@ const atualizarDiretorAtividade = async (diretorAtividade, id, contentType) => {
     let message = JSON.parse(JSON.stringify(config_message))
 
     try {
-        // Valida se o formato de dados é JSON
-        if(String(contentType).toLowerCase() != 'application/json') return message.ERROR_CONTENT_TYPE // Status code 415
-
-        let atividade = await controllerAtividade.buscarAtividade(diretorAtividade.id_atividade)
-        if(!atividade.status) return atividade
-
-        let diretor = await controllerdiretor.buscarDiretor(diretorAtividade.id_diretor)
-        if(!diretor.status) return diretor
+        let validar = await validarDados(diretorAtividade, contentType)
+        if(validar) return validar
 
         let resultBuscarId = await buscarDiretorAtividade(id)
         if(!resultBuscarId.status) return resultBuscarId // 400 e 404
 
         diretorAtividade.id = Number(id)
         let result = await diretorAtividadeDAO.updateDiretorAtividade(diretorAtividade)
-        result.atividade = atividade.response.atividade
-        result.diretor = diretor.response.diretor
 
         if(!result) return message.ERROR_INTERNAL_SERVER_MODEL // 500
 
@@ -76,20 +60,6 @@ const listarDiretorAtividade = async () => {
 
         // verfica se o array é vazio
         if(result.length <= 0) return message.ERROR_NOT_FOUND // status_code 404
-
-        for(const diretorAtividade of result){
-            let atividade = await controllerAtividade.buscarAtividade(diretorAtividade.id_atividade)
-            let diretor = await controllerdiretor.buscarDiretor(diretorAtividade.id_diretor)
-
-            if(atividade.status){
-                diretorAtividade.atividade = atividade.response.atividade
-                delete diretorAtividade.id_atividade
-            }
-            if(diretor.status) {
-                diretorAtividade.diretor = diretor.response.diretor
-                delete diretorAtividade.id_diretor
-            }
-        }
 
         let listarDiretorAtividadeMessage = await montarMensagem(message, message.SUCESS_RESPONSE, result)
         message.DEFAULT_MESSAGE.response.count = result.length
@@ -114,20 +84,6 @@ const buscarDiretorAtividade = async (id) => {
         if(!result) return message.ERROR_INTERNAL_SERVER_MODEL // 500
 
         if(result.length < 1) return config_message.ERROR_NOT_FOUND
-
-        for(const diretorAtividade of result){
-            let atividade = await controllerAtividade.buscarAtividade(diretorAtividade.id_atividade)
-            let diretor = await controllerdiretor.buscarDiretor(diretorAtividade.id_diretor)
-
-            if(atividade.status){
-                diretorAtividade.atividade = atividade.response.atividade
-                delete diretorAtividade.id_atividade
-            }
-            if(diretor.status) {
-                diretorAtividade.diretor = diretor.response.diretor
-                delete diretorAtividade.id_diretor
-            }
-        }
 
         return await montarMensagem(message, message.SUCESS_RESPONSE, result)
 
@@ -165,6 +121,25 @@ const validarId = async (id) => {
     return false
 }
 
+const validarDados = async (diretorAtividade, contentType) => {
+    let message = JSON.parse(JSON.stringify(config_message))
+
+     // Valida se o formato de dados é JSON
+    if(String(contentType).toLowerCase() != 'application/json') return message.ERROR_CONTENT_TYPE // Status code 415
+    
+    if(diretorAtividade.id_diretor == undefined || diretorAtividade.id_diretor == '' || diretorAtividade.id_diretor == null || diretorAtividade.id_diretor <= 0 || isNaN(diretorAtividade.id_diretor)){
+        message.ERROR_BAD_REQUEST.field = '[ID_DIRETOR] INVÁLIDO'
+        return message.ERROR_BAD_REQUEST // 400
+    }
+
+    if(diretorAtividade.id_atividade == undefined || diretorAtividade.id_atividade == '' || diretorAtividade.id_atividade == null || diretorAtividade.id_atividade <= 0 || isNaN(diretorAtividade.id_atividade)){
+        message.ERROR_BAD_REQUEST.field = '[ID_ATIVIDADE] INVÁLIDO'
+        return message.ERROR_BAD_REQUEST // 400
+    }
+
+    return false
+}
+
 const montarMensagem = async (base,status,response = null) => {
     base.DEFAULT_MESSAGE.status = status.status
     base.DEFAULT_MESSAGE.status_code = status.status_code
@@ -174,7 +149,6 @@ const montarMensagem = async (base,status,response = null) => {
 
     return base.DEFAULT_MESSAGE // 200 ou 201
 }
-
 
 module.exports = {
     inserirNovoDiretorAtividade,

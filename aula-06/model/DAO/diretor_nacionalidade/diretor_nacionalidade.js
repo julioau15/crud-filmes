@@ -39,6 +39,7 @@ const updateDiretorNacionalidade = async (diretorNacionalidade) => {
 
     return false
 }
+
 // select de todas diretorNacionalidades
 const selectAllDiretorNacionalidade = async () => {
     let sql = `SELECT * FROM tbl_diretor_nacionalidade ORDER BY id DESC`
@@ -65,6 +66,7 @@ const selectByIdDiretorNacionalidade = async (id) => {
 
     return false
 }
+
 // delete de diretorNacionalidade
 const deleteDiretorNacionalidade = async (id) => {
     let sql = `DELETE FROM tbl_diretor_nacionalidade
@@ -79,10 +81,50 @@ const deleteDiretorNacionalidade = async (id) => {
     return false
 }
 
+// select de todos Diretores buscando pelo id do nacionalidade
+const selectDiretoresByIdNacionalidade = async (idNacionalidade) => {
+    let sql = `SELECT tbl_diretor.*
+               FROM tbl_nacionalidade
+                    INNER JOIN tbl_diretor_nacionalidade
+                        ON tbl_nacionalidade.id = tbl_diretor_nacionalidade.id_nacionalidade
+                    INNER JOIN tbl_diretor
+                        ON tbl_diretor.id = tbl_diretor_nacionalidade.id_diretor
+               WHERE tbl_nacionalidade.id = ${idNacionalidade}`
+    try {
+        let response = await knexConex.raw(sql)
+
+        if(response) return response[0]
+        
+    } catch (error) {console.log(error)}
+
+    return false
+}
+
+// select de todas nacionalidades buscando pelo id do diretor
+const selectNacionalidadesByIdDiretor = async (idDiretor) => {
+    let sql = `SELECT tbl_nacionalidade.*
+               FROM tbl_nacionalidade
+                    INNER JOIN tbl_diretor_nacionalidade
+                        ON tbl_nacionalidade.id = tbl_diretor_nacionalidade.id_nacionalidade
+                    INNER JOIN tbl_diretor
+                        ON tbl_diretor.id = tbl_diretor_nacionalidade.id_diretor
+               WHERE tbl_diretor.id = ${idDiretor}`
+    try {
+        let response = await knexConex.raw(sql)
+
+        if(response) return response[0]
+        
+    } catch (error) {console.log(error)}
+
+    return false
+}
+
 module.exports = {
     insertDiretorNacionalidade,
     updateDiretorNacionalidade,
     selectAllDiretorNacionalidade,
     selectByIdDiretorNacionalidade,
-    deleteDiretorNacionalidade
+    deleteDiretorNacionalidade,
+    selectDiretoresByIdNacionalidade,
+    selectNacionalidadesByIdDiretor
 }

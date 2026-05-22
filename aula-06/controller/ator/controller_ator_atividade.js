@@ -6,23 +6,15 @@
  * *******************************************************************************************************/
 
 const config_message = require('../module/configMessages.js')
-const atorAtividadeDAO = require('../../model/DAO/atorAtividade/atorAtividade.js')
-const controllerAtividade = require('../atividade/controller_atividade.js')
-const controllerAtor = require('../ator/controller_ator.js')
+const atorAtividadeDAO = require('../../model/DAO/ator_atividade/ator_atividade.js')
 
 // inserir novo atorAtividade
 const inserirNovoAtorAtividade = async (atorAtividade, contentType) => {
     let message = JSON.parse(JSON.stringify(config_message))
     try {
 
-        // Valida se o formato de dados é JSON
-        if(String(contentType).toLowerCase() != 'application/json') return message.ERROR_CONTENT_TYPE // Status code 415
-
-        let atividade = await controllerAtividade.buscarAtividade(atorAtividade.id_atividade)
-        if(!atividade.status) return atividade
-
-        let ator = await controllerAtor.buscarAtor(atorAtividade.id_ator)
-        if(!ator.status) return ator
+        let validar = await validarDados(atorAtividade, contentType)
+        if(validar) return validar
 
         let result = await atorAtividadeDAO.insertAtorAtividade(atorAtividade)
 
@@ -40,22 +32,14 @@ const atualizarAtorAtividade = async (atorAtividade, id, contentType) => {
     let message = JSON.parse(JSON.stringify(config_message))
 
     try {
-        // Valida se o formato de dados é JSON
-        if(String(contentType).toLowerCase() != 'application/json') return message.ERROR_CONTENT_TYPE // Status code 415
-
-        let atividade = await controllerAtividade.buscarAtividade(atorAtividade.id_atividade)
-        if(!atividade.status) return atividade
-
-        let ator = await controllerAtor.buscarAtor(atorAtividade.id_ator)
-        if(!ator.status) return ator
+        let validar = await validarDados(atorAtividade, contentType)
+        if(validar) return validar
 
         let resultBuscarId = await buscarAtorAtividade(id)
         if(!resultBuscarId.status) return resultBuscarId // 400 e 404
 
         atorAtividade.id = Number(id)
         let result = await atorAtividadeDAO.updateAtorAtividade(atorAtividade)
-        result.atividade = atividade.response.atividade
-        result.ator = ator.response.ator
 
         if(!result) return message.ERROR_INTERNAL_SERVER_MODEL // 500
 
@@ -76,20 +60,6 @@ const listarAtorAtividade = async () => {
 
         // verfica se o array é vazio
         if(result.length <= 0) return message.ERROR_NOT_FOUND // status_code 404
-
-        for(const atorAtividade of result){
-            let atividade = await controllerAtividade.buscarAtividade(atorAtividade.id_atividade)
-            let ator = await controllerAtor.buscarAtor(atorAtividade.id_ator)
-
-            if(atividade.status){
-                atorAtividade.atividade = atividade.response.atividade
-                delete atorAtividade.id_atividade
-            }
-            if(ator.status) {
-                atorAtividade.ator = ator.response.ator
-                delete atorAtividade.id_ator
-            }
-        }
 
         let listarAtorAtividadeMessage = await montarMensagem(message, message.SUCESS_RESPONSE, result)
         message.DEFAULT_MESSAGE.response.count = result.length
@@ -114,20 +84,6 @@ const buscarAtorAtividade = async (id) => {
         if(!result) return message.ERROR_INTERNAL_SERVER_MODEL // 500
 
         if(result.length < 1) return config_message.ERROR_NOT_FOUND
-
-        for(const atorAtividade of result){
-            let atividade = await controllerAtividade.buscarAtividade(atorAtividade.id_atividade)
-            let ator = await controllerAtor.buscarAtor(atorAtividade.id_ator)
-
-            if(atividade.status){
-                atorAtividade.atividade = atividade.response.atividade
-                delete atorAtividade.id_atividade
-            }
-            if(ator.status) {
-                atorAtividade.ator = ator.response.ator
-                delete atorAtividade.id_ator
-            }
-        }
 
         return await montarMensagem(message, message.SUCESS_RESPONSE, result)
 
@@ -165,6 +121,25 @@ const validarId = async (id) => {
     return false
 }
 
+const validarDados = async (atorAtividade, contentType) => {
+    let message = JSON.parse(JSON.stringify(config_message))
+
+     // Valida se o formato de dados é JSON
+    if(String(contentType).toLowerCase() != 'application/json') return message.ERROR_CONTENT_TYPE // Status code 415
+    
+    if(atorAtividade.id_ator == undefined || atorAtividade.id_ator == '' || atorAtividade.id_ator == null || atorAtividade.id_ator <= 0 || isNaN(atorAtividade.id_ator)){
+        message.ERROR_BAD_REQUEST.field = '[ID_ATOR] INVÁLIDO'
+        return message.ERROR_BAD_REQUEST // 400
+    }
+
+    if(atorAtividade.id_atividade == undefined || atorAtividade.id_atividade == '' || atorAtividade.id_atividade == null || atorAtividade.id_atividade <= 0 || isNaN(atorAtividade.id_atividade)){
+        message.ERROR_BAD_REQUEST.field = '[ID_ATIVIDADE] INVÁLIDO'
+        return message.ERROR_BAD_REQUEST // 400
+    }
+
+    return false
+}
+
 const montarMensagem = async (base,status,response = null) => {
     base.DEFAULT_MESSAGE.status = status.status
     base.DEFAULT_MESSAGE.status_code = status.status_code
@@ -174,7 +149,6 @@ const montarMensagem = async (base,status,response = null) => {
 
     return base.DEFAULT_MESSAGE // 200 ou 201
 }
-
 
 module.exports = {
     inserirNovoAtorAtividade,

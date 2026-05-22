@@ -6,24 +6,15 @@
  * *******************************************************************************************************/
 
 const config_message = require('../module/configMessages.js')
-const filmeGeneroDAO = require('../../model/DAO/filmeGenero/filmeGenero.js')
-const controllerFilme = require('../filme/controller_filme.js')
-const controllerGenero = require('../genero/controller_genero.js')
+const filmeGeneroDAO = require('../../model/DAO/filme_genero/filme_genero.js')
 
 // inserir novo filmeGenero
 const inserirNovoFilmeGenero = async (filmeGenero, contentType) => {
     let message = JSON.parse(JSON.stringify(config_message))
     try {
-
-        // Valida se o formato de dados é JSON
-        if(String(contentType).toLowerCase() != 'application/json') return message.ERROR_CONTENT_TYPE // Status code 415
-
-        let filme = await controllerFilme.buscarFilme(filmeGenero.id_filme)
-        if(!filme.status) return filme
-
-        let genero = await controllerGenero.buscarGenero(filmeGenero.id_genero)
-        if(!genero.status) return genero
-
+        let validar = await validarDados(filmeGenero, contentType)
+        if(validar) return validar
+        
         let result = await filmeGeneroDAO.insertFilmeGenero(filmeGenero)
 
         if(!result) return message.ERROR_INTERNAL_SERVER_MODEL
@@ -40,14 +31,8 @@ const atualizarFilmeGenero = async (filmeGenero, id, contentType) => {
     let message = JSON.parse(JSON.stringify(config_message))
 
     try {
-        // Valida se o formato de dados é JSON
-        if(String(contentType).toLowerCase() != 'application/json') return message.ERROR_CONTENT_TYPE // Status code 415
-
-        let filme = await controllerFilme.buscarFilme(filmeGenero.id_filme)
-        if(!filme.status) return filme
-
-        let genero = await controllerGenero.buscarGenero(filmeGenero.id_genero)
-        if(!genero.status) return genero
+        let validar = await validarDados(filmeGenero, contentType)
+        if(validar) return validar
 
         let resultBuscarId = await buscarFilmeGenero(id)
         if(!resultBuscarId.status) return resultBuscarId // 400 e 404
@@ -65,7 +50,7 @@ const atualizarFilmeGenero = async (filmeGenero, id, contentType) => {
     return message.ERROR_INTERNAL_SERVER_CONTROLLER // 500
 }
 
-// listar todas filmeGeneroes
+// listar filmeGenero
 const listarFilmeGenero = async () => {
     let message = JSON.parse(JSON.stringify(config_message))
 
@@ -76,20 +61,6 @@ const listarFilmeGenero = async () => {
 
         // verfica se o array é vazio
         if(result.length <= 0) return message.ERROR_NOT_FOUND // status_code 404
-
-        for(const filmeGenero of result){
-            let filme = await controllerFilme.buscarFilme(filmeGenero.id_filme)
-            let genero = await controllerGenero.buscarGenero(filmeGenero.id_genero)
-
-            if(filme.status){
-                filmeGenero.filme = filme.response.filme
-                delete filmeGenero.id_filme
-            }
-            if(genero.status) {
-                filmeGenero.genero = genero.response.genero
-                delete filmeGenero.id_genero
-            }
-        }
 
         let listarFilmeGeneroMessage = await montarMensagem(message, message.SUCESS_RESPONSE, result)
         message.DEFAULT_MESSAGE.response.count = result.length
@@ -114,20 +85,6 @@ const buscarFilmeGenero = async (id) => {
         if(!result) return message.ERROR_INTERNAL_SERVER_MODEL // 500
 
         if(result.length < 1) return config_message.ERROR_NOT_FOUND
-
-        for(const filmeGenero of result){
-            let filme = await controllerFilme.buscarFilme(filmeGenero.id_filme)
-            let genero = await controllerGenero.buscarGenero(filmeGenero.id_genero)
-
-            if(filme.status){
-                filmeGenero.filme = filme.response.filme
-                delete filmeGenero.id_filme
-            }
-            if(genero.status) {
-                filmeGenero.genero = genero.response.genero
-                delete filmeGenero.id_genero
-            }
-        }
 
         return await montarMensagem(message, message.SUCESS_RESPONSE, result)
 
@@ -154,11 +111,73 @@ const excluirFilmeGenero = async (id) => {
     return message.ERROR_INTERNAL_SERVER_CONTROLLER // 500
 }
 
+// buscar filme pelo id do Genero
+const buscarFilmeIdGenero = async (idGenero) => {
+    let message = JSON.parse(JSON.stringify(config_message))
+
+    try {
+
+       const validarID = await validarId(idGenero)
+       if(validarID) return validarID
+
+        let result = await filmeGeneroDAO.selectFilmesByIdGenero(idGenero)
+
+        if(!result) return message.ERROR_INTERNAL_SERVER_MODEL // 500
+
+        if(result.length < 1) return config_message.ERROR_NOT_FOUND
+
+        return await montarMensagem(message, message.SUCESS_RESPONSE, result)
+
+    } catch (error) {console.log(error)}
+    return message.ERROR_INTERNAL_SERVER_CONTROLLER // 500
+}
+
+// buscar genero pelo id do filme
+const buscarGeneroIdFilme = async (idFilme) => {
+    let message = JSON.parse(JSON.stringify(config_message))
+
+    try {
+
+       const validarID = await validarId(idFilme)
+       if(validarID) return validarID
+
+        let result = await filmeGeneroDAO.selectGenerosByIdFilme(idFilme)
+
+        if(!result) return message.ERROR_INTERNAL_SERVER_MODEL // 500
+
+        if(result.length < 1) return config_message.ERROR_NOT_FOUND
+
+        return await montarMensagem(message, message.SUCESS_RESPONSE, result)
+
+    } catch (error) {console.log(error)}
+    return message.ERROR_INTERNAL_SERVER_CONTROLLER // 500
+}
+
+
 const validarId = async (id) => {
     let message = JSON.parse(JSON.stringify(config_message))
     
     if(id == undefined || id == '' || id == null || id <= 0 || isNaN(id)){
         message.ERROR_BAD_REQUEST.field = '[ID] INVÁLIDO'
+        return message.ERROR_BAD_REQUEST // 400
+    }
+
+    return false
+}
+
+const validarDados = async (filmeGenero, contentType) => {
+    let message = JSON.parse(JSON.stringify(config_message))
+
+     // Valida se o formato de dados é JSON
+    if(String(contentType).toLowerCase() != 'application/json') return message.ERROR_CONTENT_TYPE // Status code 415
+    
+    if(filmeGenero.id_filme == undefined || filmeGenero.id_filme == '' || filmeGenero.id_filme == null || filmeGenero.id_filme <= 0 || isNaN(filmeGenero.id_filme)){
+        message.ERROR_BAD_REQUEST.field = '[ID_FILME] INVÁLIDO'
+        return message.ERROR_BAD_REQUEST // 400
+    }
+
+    if(filmeGenero.id_genero == undefined || filmeGenero.id_genero == '' || filmeGenero.id_genero == null || filmeGenero.id_genero <= 0 || isNaN(filmeGenero.id_genero)){
+        message.ERROR_BAD_REQUEST.field = '[ID_GENERO] INVÁLIDO'
         return message.ERROR_BAD_REQUEST // 400
     }
 
@@ -181,5 +200,7 @@ module.exports = {
     atualizarFilmeGenero,
     listarFilmeGenero,
     buscarFilmeGenero,
-    excluirFilmeGenero
+    excluirFilmeGenero,
+    buscarFilmeIdGenero,
+    buscarGeneroIdFilme
 }
