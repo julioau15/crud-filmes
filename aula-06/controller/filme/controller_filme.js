@@ -14,6 +14,8 @@ const filmeDAO = require('../../model/DAO/filme/filme.js')
 // Import de arquivos de Controller
 const controllerClassificacao = require('../classificacao/controller_classificacao.js')
 const controller_filme_genero = require('./controller_filme_genero.js')
+const controller_filme_ator = require('./controller_filme_ator.js')
+const controller_filme_diretor = require('./controller_filme_diretor.js')
 
 // Função para inserir um novo filme
 const inserirNovoFilme = async (filme, contentType) => {
@@ -37,6 +39,26 @@ const inserirNovoFilme = async (filme, contentType) => {
             let filmeGenero = { "id_filme": filme.id, "id_genero": genero.id}
             // chama a controler
             let resultInsertGenero = await controller_filme_genero.inserirNovoFilmeGenero(filmeGenero, contentType)
+
+            if(!resultInsertGenero.status)  return message.SUCESS_CREATED_ITEM_WARNING // 201
+        }
+
+        // Manipulação de dados para inserir os atores do filme
+        for(ator of filme.ator){
+            // Cria o objeto JSON com os Ids do filme e dos atores
+            let filmeAtor = { "id_filme": filme.id, "id_ator": ator.id}
+            // chama a controler
+            let resultInsertAtor = await controller_filme_ator.inserirNovoFilmeAtor(filmeAtor, contentType)
+
+            if(!resultInsertAtor.status)  return message.SUCESS_CREATED_ITEM_WARNING // 201
+        }
+
+        // Manipulação de dados para inserir os diretores do filme
+        for(diretor of filme.diretor){
+            // Cria o objeto JSON com os Ids do filme e dos diretores
+            let filmeDiretor = { "id_filme": filme.id, "id_diretor": diretor.id}
+            // chama a controler
+            let resultInsertDiretor = await controller_filme_diretor.inserirNovoFilmeDiretor(filmeDiretor, contentType)
 
             if(!resultInsertGenero.status)  return message.SUCESS_CREATED_ITEM_WARNING // 201
         }
@@ -96,6 +118,16 @@ const listarFilme = async () => {
             if(genero.status){
                 filme.genero = genero.response.filmeGenero
             }
+
+            let ator = await controller_filme_ator.buscarAtorIdFilme(filme.id)
+            if(ator.status){
+                filme.ator = ator.response.filmeAtor
+            }
+
+            let diretor = await controller_filme_diretor.buscarDiretorIdFilme(filme.id)
+            if(diretor.status){
+                filme.diretor = diretor.response.filmeDiretor
+            }
         }
 
         let listarFilmeMessage = await montarMensagem(message, message.SUCESS_RESPONSE, result)
@@ -132,6 +164,16 @@ const buscarFilme = async (id) => {
             let genero = await controller_filme_genero.buscarGeneroIdFilme(filme.id)
             if(genero.status){
                 filme.genero = genero.response.filmeGenero
+            }
+
+            let ator = await controller_filme_ator.buscarAtorIdFilme(filme.id)
+            if(ator.status){
+                filme.ator = ator.response.filmeAtor
+            }
+
+            let diretor = await controller_filme_diretor.buscarDiretorIdFilme(filme.id)
+            if(diretor.status){
+                filme.diretor = diretor.response.filmeDiretor
             }
         }
 

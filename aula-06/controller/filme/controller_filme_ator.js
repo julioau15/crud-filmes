@@ -110,6 +110,48 @@ const excluirFilmeAtor = async (id) => {
     return message.ERROR_INTERNAL_SERVER_CONTROLLER // 500
 }
 
+// buscar filme pelo id do Ator
+const buscarFilmeIdAtor = async (idAtor) => {
+    let message = JSON.parse(JSON.stringify(config_message))
+
+    try {
+
+       const validarID = await validarId(idAtor)
+       if(validarID) return validarID
+
+        let result = await filmeAtorDAO.selectFilmesByIdAtor(idAtor)
+
+        if(!result) return message.ERROR_INTERNAL_SERVER_MODEL // 500
+
+        if(result.length < 1) return config_message.ERROR_NOT_FOUND
+
+        return await montarMensagem(message, message.SUCESS_RESPONSE, result)
+
+    } catch (error) {console.log(error)}
+    return message.ERROR_INTERNAL_SERVER_CONTROLLER // 500
+}
+
+// buscar ator pelo id do filme
+const buscarAtorIdFilme = async (idFilme) => {
+    let message = JSON.parse(JSON.stringify(config_message))
+
+    try {
+
+       const validarID = await validarId(idFilme)
+       if(validarID) return validarID
+
+        let result = await filmeAtorDAO.selectAtoresByIdFilme(idFilme)
+
+        if(!result) return message.ERROR_INTERNAL_SERVER_MODEL // 500
+
+        if(result.length < 1) return config_message.ERROR_NOT_FOUND
+
+        return await montarMensagem(message, message.SUCESS_RESPONSE, result)
+
+    } catch (error) {console.log(error)}
+    return message.ERROR_INTERNAL_SERVER_CONTROLLER // 500
+}
+
 const validarId = async (id) => {
     let message = JSON.parse(JSON.stringify(config_message))
     
@@ -155,5 +197,7 @@ module.exports = {
     atualizarFilmeAtor,
     listarFilmeAtor,
     buscarFilmeAtor,
-    excluirFilmeAtor
+    excluirFilmeAtor,
+    buscarFilmeIdAtor,
+    buscarAtorIdFilme
 }
