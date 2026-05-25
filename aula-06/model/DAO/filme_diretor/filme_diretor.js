@@ -79,10 +79,90 @@ const deleteFilmeDiretor = async (id) => {
     return false
 }
 
+// select de todos Diretores buscando pelo id do nacionalidade
+const selectDiretoresByIdNacionalidade = async (idNacionalidade) => {
+    let sql = `SELECT tbl_diretor.*
+               FROM tbl_nacionalidade
+                    INNER JOIN tbl_diretor_nacionalidade
+                        ON tbl_nacionalidade.id = tbl_diretor_nacionalidade.id_nacionalidade
+                    INNER JOIN tbl_diretor
+                        ON tbl_diretor.id = tbl_diretor_nacionalidade.id_diretor
+               WHERE tbl_nacionalidade.id = ${idNacionalidade}`
+    try {
+        let response = await knexConex.raw(sql)
+
+        if(response) return response[0]
+        
+    } catch (error) {console.log(error)}
+
+    return false
+}
+
+// select de todas nacionalidades buscando pelo id do diretor
+const selectNacionalidadesByIdDiretor = async (idDiretor) => {
+    let sql = `SELECT tbl_nacionalidade.*
+               FROM tbl_nacionalidade
+                    INNER JOIN tbl_diretor_nacionalidade
+                        ON tbl_nacionalidade.id = tbl_diretor_nacionalidade.id_nacionalidade
+                    INNER JOIN tbl_diretor
+                        ON tbl_diretor.id = tbl_diretor_nacionalidade.id_diretor
+               WHERE tbl_diretor.id = ${idDiretor}`
+    try {
+        let response = await knexConex.raw(sql)
+
+        if(response) return response[0]
+        
+    } catch (error) {console.log(error)}
+
+    return false
+}
+
+
+// select de todos filmes buscando pelo id do diretor
+const selectFilmesByDiretor = async (idDiretor) => {
+    let sql = `SELECT tbl_filme.*
+               FROM tbl_filme
+                    INNER JOIN tbl_filme_diretor
+                        ON tbl_filme.id = tbl_filme_diretor.id_filme
+                    INNER JOIN tbl_diretor
+                        ON tbl_diretor.id = tbl_filme_diretor.id_diretor
+               WHERE tbl_diretor.id = ${idDiretor}`
+    try {
+        let response = await knexConex.raw(sql)
+
+        if(response) return response[0]
+        
+    } catch (error) {console.log(error)}
+
+    return false
+}
+
+// select de todos diretores buscando pelo id do filme
+const selectDiretoresByFilme = async (idFilme) => {
+    let sql = `SELECT tbl_diretor.*
+               FROM tbl_diretor
+                    INNER JOIN tbl_filme_diretor
+                        ON tbl_diretor.id = tbl_filme_diretor.id_diretor
+                    INNER JOIN tbl_filme
+                        ON tbl_filme.id = tbl_filme_diretor.id_filme
+               WHERE tbl_filme.id = ${idFilme}`
+    try {
+        let response = await knexConex.raw(sql)
+
+        if(response) return response[0]
+        
+    } catch (error) {console.log(error)}
+
+    return false
+}
+
+
 module.exports = {
     insertFilmeDiretor,
     updateFilmeDiretor,
     selectAllFilmeDiretor,
     selectByIdFilmeDiretor,
-    deleteFilmeDiretor
+    deleteFilmeDiretor,
+    selectFilmesByDiretor,
+    selectDiretoresByFilme
 }

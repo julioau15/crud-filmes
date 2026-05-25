@@ -79,10 +79,51 @@ const deleteFilmeAtor = async (id) => {
     return false
 }
 
+// select de todos filmes buscando pelo id do ator
+const selectFilmesByIdAtor = async (idAtor) => {
+    let sql = `SELECT tbl_filme.*
+               FROM tbl_filme
+                    INNER JOIN tbl_filme_ator
+                        ON tbl_filme.id = tbl_filme_ator.id_filme
+                    INNER JOIN tbl_ator
+                        ON tbl_ator.id = tbl_filme_ator.id_ator
+               WHERE tbl_ator.id = ${idAtor}`
+    try {
+        let response = await knexConex.raw(sql)
+
+        if(response) return response[0]
+        
+    } catch (error) {console.log(error)}
+
+    return false
+}
+
+// select de todos atores buscando pelo id do filme
+const selectAtoresByIdFilme = async (idFilme) => {
+    let sql = `SELECT tbl_ator.*
+               FROM tbl_ator
+                    INNER JOIN tbl_filme_ator
+                        ON tbl_ator.id = tbl_filme_ator.id_ator
+                    INNER JOIN tbl_filme
+                        ON tbl_filme.id = tbl_filme_ator.id_filme
+               WHERE tbl_filme.id = ${idFilme}`
+    try {
+        let response = await knexConex.raw(sql)
+
+        if(response) return response[0]
+        
+    } catch (error) {console.log(error)}
+
+    return false
+}
+
+
 module.exports = {
     insertFilmeAtor,
     updateFilmeAtor,
     selectAllFilmeAtor,
     selectByIdFilmeAtor,
-    deleteFilmeAtor
+    deleteFilmeAtor,
+    selectFilmesByIdAtor,
+    selectAtoresByIdFilme
 }

@@ -32,7 +32,6 @@ const updateAtividade = async (atividade) => {
     try {
         let response = await knexConex.raw(sql)
 
-
         if(response) return response
 
     } catch (error) {}
