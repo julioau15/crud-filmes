@@ -60,7 +60,7 @@ const inserirNovoFilme = async (filme, contentType) => {
             // chama a controler
             let resultInsertDiretor = await controller_filme_diretor.inserirNovoFilmeDiretor(filmeDiretor, contentType)
 
-            if(!resultInsertGenero.status)  return message.SUCESS_CREATED_ITEM_WARNING // 201
+            if(!resultInsertDiretor.status)  return message.SUCESS_CREATED_ITEM_WARNING // 201
         }
 
         return await montarMensagem(message, message.SUCESS_CREATED_ITEM, filme) // 201
