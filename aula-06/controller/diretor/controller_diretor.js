@@ -7,6 +7,8 @@
 
 const config_message = require('../module/configMessages.js')
 const diretorDAO = require('../../model/DAO/diretor/diretor.js')
+const controller_diretor_atividade = require('./controller_diretor_atividade.js')
+const controller_diretor_nacionalidade = require('./controller_diretor_nacionalidade.js')
 
 // inserir nova diretor
 const inserirNovoDiretor = async (diretor, contentType) => {
@@ -20,6 +22,19 @@ const inserirNovoDiretor = async (diretor, contentType) => {
         if(!result) return message.ERROR_INTERNAL_SERVER_MODEL
 
         diretor.id = result
+
+        for (const atividade of diretor.atividade || []) {
+            let diretorAtividade = { id_atividade: atividade.id, id_diretor: diretor.id }
+            let resultInsertAtividade = await controller_diretor_atividade.inserirNovoDiretorAtividade(diretorAtividade, contentType)
+            if(!resultInsertAtividade.status) return message.SUCESS_CREATED_ITEM_WARNING
+        }
+
+        for (const nacionalidade of diretor.nacionalidade || []) {
+            let diretorNacionalidade = { id_nacionalidade: nacionalidade.id, id_diretor: diretor.id }
+            let resultInsertNacionalidade = await controller_diretor_nacionalidade.inserirNovoDiretorNacionalidade(diretorNacionalidade, contentType)
+            if(!resultInsertNacionalidade.status) return message.SUCESS_CREATED_ITEM_WARNING
+        }
+
         return await montarMensagem(message, message.SUCESS_CREATED_ITEM, diretor)
 
     } catch (error) {console.log(error)}
@@ -60,6 +75,22 @@ const listarDiretor = async () => {
         // verfica se o array é vazio
         if(result.length <= 0) return message.ERROR_NOT_FOUND // status_code 404
 
+        for (diretor of result) {
+            let atividades = await controller_diretor_atividade.buscarAtividadesIdDiretor(diretor.id)
+            if(atividades.status) {
+                diretor.atividade = atividades.response.diretorAtividade
+            } else {
+                diretor.atividade = []
+            }
+
+            let nacionalidades = await controller_diretor_nacionalidade.buscarNacionalidadesIdDiretor(diretor.id)
+            if(nacionalidades.status) {
+                diretor.nacionalidade = nacionalidades.response.diretorNacionalidade
+            } else {
+                diretor.nacionalidade = []
+            }
+        }
+
         let listarDiretorMessage = await montarMensagem(message, message.SUCESS_RESPONSE, result)
         message.DEFAULT_MESSAGE.response.count = result.length
 
@@ -83,6 +114,22 @@ const buscarDiretor = async (id) => {
         if(!result) return message.ERROR_INTERNAL_SERVER_MODEL // 500
 
         if(result.length <= 0) return config_message.ERROR_NOT_FOUND
+
+        for (diretor of result) {
+            let atividades = await controller_diretor_atividade.buscarAtividadesIdDiretor(diretor.id)
+            if(atividades.status) {
+                diretor.atividade = atividades.response.diretorAtividade
+            } else {
+                diretor.atividade = []
+            }
+
+            let nacionalidades = await controller_diretor_nacionalidade.buscarNacionalidadesIdDiretor(diretor.id)
+            if(nacionalidades.status) {
+                diretor.nacionalidade = nacionalidades.response.diretorNacionalidade
+            } else {
+                diretor.nacionalidade = []
+            }
+        }
 
         return await montarMensagem(message, message.SUCESS_RESPONSE, result)
 

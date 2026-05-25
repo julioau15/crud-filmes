@@ -110,6 +110,48 @@ const excluirAtorNacionalidade = async (id) => {
     return message.ERROR_INTERNAL_SERVER_CONTROLLER // 500
 }
 
+// buscar nacionalidades pelo id do ator
+const buscarNacionalidadesIdAtor = async (idAtor) => {
+    let message = JSON.parse(JSON.stringify(config_message))
+
+    try {
+
+       const validarID = await validarId(idAtor)
+       if(validarID) return validarID
+
+        let result = await atorNacionalidadeDAO.selectNacionalidadesByIdAtor(idAtor)
+
+        if(!result) return message.ERROR_INTERNAL_SERVER_MODEL // 500
+
+        if(result.length < 1) return config_message.ERROR_NOT_FOUND
+
+        return await montarMensagem(message, message.SUCESS_RESPONSE, result)
+
+    } catch (error) {console.log(error)}
+    return message.ERROR_INTERNAL_SERVER_CONTROLLER // 500
+}
+
+// buscar atores pelo id da nacionalidade
+const buscarAtoresIdNacionalidade = async (idNacionalidade) => {
+    let message = JSON.parse(JSON.stringify(config_message))
+
+    try {
+
+       const validarID = await validarId(idNacionalidade)
+       if(validarID) return validarID
+
+        let result = await atorNacionalidadeDAO.selectAtoresByIdNacionalidade(idNacionalidade)
+
+        if(!result) return message.ERROR_INTERNAL_SERVER_MODEL // 500
+
+        if(result.length < 1) return config_message.ERROR_NOT_FOUND
+
+        return await montarMensagem(message, message.SUCESS_RESPONSE, result)
+
+    } catch (error) {console.log(error)}
+    return message.ERROR_INTERNAL_SERVER_CONTROLLER // 500
+}
+
 const validarId = async (id) => {
     let message = JSON.parse(JSON.stringify(config_message))
     
@@ -155,5 +197,7 @@ module.exports = {
     atualizarAtorNacionalidade,
     listarAtorNacionalidade,
     buscarAtorNacionalidade,
-    excluirAtorNacionalidade
+    excluirAtorNacionalidade,
+    buscarNacionalidadesIdAtor,
+    buscarAtoresIdNacionalidade
 }

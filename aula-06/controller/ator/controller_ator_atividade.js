@@ -110,6 +110,48 @@ const excluirAtorAtividade = async (id) => {
     return message.ERROR_INTERNAL_SERVER_CONTROLLER // 500
 }
 
+// buscar atividades pelo id do ator
+const buscarAtividadesIdAtor = async (idAtor) => {
+    let message = JSON.parse(JSON.stringify(config_message))
+
+    try {
+
+       const validarID = await validarId(idAtor)
+       if(validarID) return validarID
+
+        let result = await atorAtividadeDAO.selectAtividadesByIdAtor(idAtor)
+
+        if(!result) return message.ERROR_INTERNAL_SERVER_MODEL // 500
+
+        if(result.length < 1) return config_message.ERROR_NOT_FOUND
+
+        return await montarMensagem(message, message.SUCESS_RESPONSE, result)
+
+    } catch (error) {console.log(error)}
+    return message.ERROR_INTERNAL_SERVER_CONTROLLER // 500
+}
+
+// buscar atores pelo id da atividade
+const buscarAtoresIdAtividade = async (idAtividade) => {
+    let message = JSON.parse(JSON.stringify(config_message))
+
+    try {
+
+       const validarID = await validarId(idAtividade)
+       if(validarID) return validarID
+
+        let result = await atorAtividadeDAO.selectAtoresByIdAtividade(idAtividade)
+
+        if(!result) return message.ERROR_INTERNAL_SERVER_MODEL // 500
+
+        if(result.length < 1) return config_message.ERROR_NOT_FOUND
+
+        return await montarMensagem(message, message.SUCESS_RESPONSE, result)
+
+    } catch (error) {console.log(error)}
+    return message.ERROR_INTERNAL_SERVER_CONTROLLER // 500
+}
+
 const validarId = async (id) => {
     let message = JSON.parse(JSON.stringify(config_message))
     
@@ -155,5 +197,7 @@ module.exports = {
     atualizarAtorAtividade,
     listarAtorAtividade,
     buscarAtorAtividade,
-    excluirAtorAtividade
+    excluirAtorAtividade,
+    buscarAtividadesIdAtor,
+    buscarAtoresIdAtividade
 }
