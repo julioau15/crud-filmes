@@ -119,6 +119,20 @@ const selectNacionalidadesByIdDiretor = async (idDiretor) => {
     return false
 }
 
+// delete das nacionalidades filtrando pelo id do diretor
+const deletenNacionalidadesByIdDiretor = async (idDiretor) => {
+    let sql = `DELETE FROM tbl_diretor_nacionalidade
+               WHERE id_diretor = ${idDiretor}`
+    try {
+        let response = await knexConex.raw(sql)
+
+        if(response) return response
+ 
+    } catch (error) {}
+
+    return false
+}
+
 module.exports = {
     insertDiretorNacionalidade,
     updateDiretorNacionalidade,
@@ -126,5 +140,6 @@ module.exports = {
     selectByIdDiretorNacionalidade,
     deleteDiretorNacionalidade,
     selectDiretoresByIdNacionalidade,
-    selectNacionalidadesByIdDiretor
+    selectNacionalidadesByIdDiretor,
+    deletenNacionalidadesByIdDiretor
 }

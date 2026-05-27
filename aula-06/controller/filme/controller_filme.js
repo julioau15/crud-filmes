@@ -81,15 +81,56 @@ const atualizarFilme = async (filme, id, contentType) => {
             // Se for false, o filme não foi encontrado ou houve um erro de processamento
         if(!resultBuscarID.status) return resultBuscarID // Status code 400 ou 404 ou 500
 
-        // valida dados obrigatórios
+        // Valida dados obrigatórios
         let validar = await validarDados(filme, contentType)
         if(validar) return validar
         
-        // adiciona atributo 'id' do filme no JSON para ser enviado no DAO
+        // Adiciona atributo 'id' do filme no JSON para ser enviado no DAO
         filme.id = Number(id)
         let result = await filmeDAO.updateFilme(filme) // Tenta update no banco
         if(!result) return message.ERROR_INTERNAL_SERVER_MODEL // Status code 500
 
+        // Manipulação de dados na tabela de relação entre filme e genero
+        let resultDeleteGenero = await controller_filme_genero.excluirGenerosIdFilme(filme.id)
+
+        // após a exclusão de todos os generos relacionados com o filme
+        if(resultDeleteGenero.status){
+            for(genero of filme.genero){
+                // Cria o objeto JSON com os Ids do filme e dos generos
+                let filmeGenero = { "id_filme": filme.id, "id_genero": genero.id}
+                // chama a controler
+                let resultInsertGenero = await controller_filme_genero.inserirNovoFilmeGenero(filmeGenero, contentType)
+    
+                if(!resultInsertGenero.status)  return message.SUCESS_CREATED_ITEM_WARNING // 201
+            } 
+        }
+
+         // Manipulação de dados na tabela de relação entre filme e ator
+        let resultDeleteAtor = await controller_filme_ator.excluirAtoresIdFilme(filme.id)
+        if(resultDeleteAtor.status){
+            for(ator of filme.ator){
+                // Cria o objeto JSON com os Ids do filme e dos atores
+                let filmeAtor = { "id_filme": filme.id, "id_ator": ator.id}
+                // chama a controler
+                let resultInsertAtor = await controller_filme_ator.inserirNovoFilmeAtor(filmeAtor, contentType)
+    
+                if(!resultInsertAtor.status)  return message.SUCESS_CREATED_ITEM_WARNING // 201
+            }
+        }
+
+         // Manipulação de dados na tabela de relação entre filme e diretor
+        let resultDeleteDiretor = await controller_filme_diretor.excluirDiretoresIdFilme(filme.id)
+        if(resultDeleteDiretor.status){
+            for(diretor of filme.diretor){
+                // Cria o objeto JSON com os Ids do filme e dos diretores
+                let filmeDiretor = { "id_filme": filme.id, "id_diretor": diretor.id}
+                // chama a controler
+                let resultInsertDiretor = await controller_filme_diretor.inserirNovoFilmeDiretor(filmeDiretor, contentType)
+    
+                if(!resultInsertDiretor.status)  return message.SUCESS_CREATED_ITEM_WARNING // 201
+            }
+        }
+        
         return await montarMensagem(message, message.SUCESS_UPDATE_ITEM, filme) // 200
 
     } catch (error) {console.log(error)}

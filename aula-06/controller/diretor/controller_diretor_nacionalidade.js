@@ -152,6 +152,21 @@ const buscarDiretoresIdNacionalidade = async (idNacionalidade) => {
     return message.ERROR_INTERNAL_SERVER_CONTROLLER // 500
 }
 
+// excluir nacionalidades relacionadas ao diretor
+const excluirNacionalidadesIdDiretor = async (idDiretor) => {
+    let message = JSON.parse(JSON.stringify(config_message))
+
+    try {
+        let result = await diretorNacionalidadeDAO.deletenNacionalidadesByIdDiretor(idDiretor)
+
+        if(!result) return message.ERROR_INTERNAL_SERVER_MODEL // 500
+
+        return await montarMensagem(message, message.SUCESS_DELETE_ITEM)
+
+    } catch (error) {console.log(error)}
+    return message.ERROR_INTERNAL_SERVER_CONTROLLER // 500
+}
+
 const validarId = async (id) => {
     let message = JSON.parse(JSON.stringify(config_message))
     
@@ -199,5 +214,6 @@ module.exports = {
     buscarDiretorNacionalidade,
     excluirDiretorNacionalidade,
     buscarNacionalidadesIdDiretor,
-    buscarDiretoresIdNacionalidade
+    buscarDiretoresIdNacionalidade,
+    excluirNacionalidadesIdDiretor
 }

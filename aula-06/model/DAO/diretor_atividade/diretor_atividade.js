@@ -119,6 +119,20 @@ const selectAtividadesByIdDiretor = async (idDiretor) => {
     return false
 }
 
+// delete das atividades filtrando pelo id do diretor
+const deleteAtividadesByIdDiretor = async (idDiretor) => {
+    let sql = `DELETE FROM tbl_diretor_atividade
+               WHERE id_diretor = ${idDiretor}`
+    try {
+        let response = await knexConex.raw(sql)
+
+        if(response) return response
+ 
+    } catch (error) {}
+
+    return false
+}
+
 module.exports = {
     insertDiretorAtividade,
     updateDiretorAtividade,
@@ -126,5 +140,6 @@ module.exports = {
     selectByIdDiretorAtividade,
     deleteDiretorAtividade,
     selectDiretoresByIdAtividade,
-    selectAtividadesByIdDiretor
+    selectAtividadesByIdDiretor,
+    deleteAtividadesByIdDiretor
 }

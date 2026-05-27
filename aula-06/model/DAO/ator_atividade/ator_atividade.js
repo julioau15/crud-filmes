@@ -119,6 +119,20 @@ const selectAtividadesByIdAtor = async (idAtor) => {
     return false
 }
 
+// função para excluir as atividades filtrando pelos Id do ator
+const deleteAtividadesByIdAtor = async (id_ator) => {
+    let sql = `DELETE FROM tbl_ator_atividade
+               WHERE id_ator = ${id_ator}`
+    try {
+        let response = await knexConex.raw(sql)
+
+        if(response) return response
+ 
+    } catch (error) {console.log(error)}
+
+    return false
+}
+
 module.exports = {
     insertAtorAtividade,
     updateAtorAtividade,
@@ -126,5 +140,6 @@ module.exports = {
     selectByIdAtorAtividade,
     deleteAtorAtividade,
     selectAtividadesByIdAtor,
-    selectAtoresByIdAtividade
+    selectAtoresByIdAtividade,
+    deleteAtividadesByIdAtor
 }

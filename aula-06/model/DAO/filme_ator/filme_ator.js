@@ -119,6 +119,20 @@ const selectAtoresByIdFilme = async (idFilme) => {
     return false
 }
 
+// função para excluir os atores filtrando pelos Id do filme
+const deleteAtoresByIdFilme = async (idFilme) => {
+    let sql = `DELETE FROM tbl_filme_ator
+               WHERE id_filme = ${idFilme}`
+    try {
+        let response = await knexConex.raw(sql)
+
+        if(response) return response
+ 
+    } catch (error) {console.log(error)}
+
+    return false
+}
+
 module.exports = {
     insertFilmeAtor,
     updateFilmeAtor,
@@ -126,5 +140,6 @@ module.exports = {
     selectByIdFilmeAtor,
     deleteFilmeAtor,
     selectFilmesByIdAtor,
-    selectAtoresByIdFilme
+    selectAtoresByIdFilme,
+    deleteAtoresByIdFilme
 }

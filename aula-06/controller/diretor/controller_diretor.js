@@ -57,6 +57,26 @@ const atualizarDiretor = async (diretor, id, contentType) => {
 
         if(!result) return message.ERROR_INTERNAL_SERVER_MODEL // 500
 
+        // Manipulação de dados para tabela de diretor e atividade
+        let resultDeleteAtividade = await controller_diretor_atividade.excluirAtividadesIdDiretor(diretor.id)
+        if(resultDeleteAtividade.status){
+            for (const atividade of diretor.atividade || []) {
+                let diretorAtividade = { id_atividade: atividade.id, id_diretor: diretor.id }
+                let resultInsertAtividade = await controller_diretor_atividade.inserirNovoDiretorAtividade(diretorAtividade, contentType)
+                if(!resultInsertAtividade.status) return message.SUCESS_CREATED_ITEM_WARNING
+            }
+        }
+
+        // Manipulação de dados para tabela de diretor e nacionalidade
+        let resultDeleteNacionalidade = await controller_diretor_nacionalidade.excluirNacionalidadesIdDiretor(diretor.id)
+        if(resultDeleteNacionalidade.status){
+            for (const nacionalidade of diretor.nacionalidade || []) {
+                let diretorNacionalidade = { id_nacionalidade: nacionalidade.id, id_diretor: diretor.id }
+                let resultInsertNacionalidade = await controller_diretor_nacionalidade.inserirNovoDiretorNacionalidade(diretorNacionalidade, contentType)
+                if(!resultInsertNacionalidade.status) return message.SUCESS_CREATED_ITEM_WARNING
+            }
+        }
+
         return await montarMensagem(message, message.SUCESS_UPDATE_ITEM, diretor) // 200
 
     } catch (error) {console.log(error)}

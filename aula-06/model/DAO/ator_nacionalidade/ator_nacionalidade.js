@@ -119,6 +119,20 @@ const selectNacionalidadesByIdAtor = async (idAtor) => {
     return false
 }
 
+// função para excluir as nacionalidades filtrando pelos Id do ator
+const deleteNacionalidadesByIdAtor = async (idAtor) => {
+    let sql = `DELETE FROM tbl_ator_nacionalidade
+               WHERE id_ator = ${idAtor}`
+    try {
+        let response = await knexConex.raw(sql)
+
+        if(response) return response
+ 
+    } catch (error) {console.log(error)}
+
+    return false
+}
+
 module.exports = {
     insertAtorNacionalidade,
     updateAtorNacionalidade,
@@ -126,5 +140,6 @@ module.exports = {
     selectByIdAtorNacionalidade,
     deleteAtorNacionalidade,
     selectAtoresByIdNacionalidade,
-    selectNacionalidadesByIdAtor
+    selectNacionalidadesByIdAtor,
+    deleteNacionalidadesByIdAtor
 }

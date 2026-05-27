@@ -152,6 +152,21 @@ const buscarDiretoresIdAtividade = async (idAtividade) => {
     return message.ERROR_INTERNAL_SERVER_CONTROLLER // 500
 }
 
+// excluir atividades relacionadas ao diretor
+const excluirAtividadesIdDiretor = async (idDiretor) => {
+    let message = JSON.parse(JSON.stringify(config_message))
+
+    try {
+        let result = await diretorAtividadeDAO.deleteAtividadesByIdDiretor(idDiretor)
+
+        if(!result) return message.ERROR_INTERNAL_SERVER_MODEL // 500
+
+        return await montarMensagem(message, message.SUCESS_DELETE_ITEM)
+
+    } catch (error) {console.log(error)}
+    return message.ERROR_INTERNAL_SERVER_CONTROLLER // 500
+}
+
 const validarId = async (id) => {
     let message = JSON.parse(JSON.stringify(config_message))
     
@@ -199,5 +214,6 @@ module.exports = {
     buscarDiretorAtividade,
     excluirDiretorAtividade,
     buscarAtividadesIdDiretor,
-    buscarDiretoresIdAtividade
+    buscarDiretoresIdAtividade,
+    excluirAtividadesIdDiretor
 }

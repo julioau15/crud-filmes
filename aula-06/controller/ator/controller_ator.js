@@ -23,13 +23,13 @@ const inserirNovoAtor = async (ator, contentType) => {
 
         ator.id = result
 
-        for (const atividade of ator.atividade || []) {
+        for (const atividade of ator.atividade) {
             let atorAtividade = { id_atividade: atividade.id, id_ator: ator.id }
             let resultInsertAtividade = await controller_ator_atividade.inserirNovoAtorAtividade(atorAtividade, contentType)
             if(!resultInsertAtividade.status) return message.SUCESS_CREATED_ITEM_WARNING // 201
         }
 
-        for (const nacionalidade of ator.nacionalidade || []) {
+        for (const nacionalidade of ator.nacionalidade) {
             let atorNacionalidade = { id_nacionalidade: nacionalidade.id, id_ator: ator.id }
             let resultInsertNacionalidade = await controller_ator_nacionalidade.inserirNovoAtorNacionalidade(atorNacionalidade, contentType)
             if(!resultInsertNacionalidade.status) return message.SUCESS_CREATED_ITEM_WARNING // 201
@@ -56,6 +56,26 @@ const atualizarAtor = async (ator, id, contentType) => {
         let result = await atorDAO.updateAtor(ator)
 
         if(!result) return message.ERROR_INTERNAL_SERVER_MODEL // 500
+
+        // Manipulação de dados entre as tabelas ator e atividade
+        let resultDeleteAtividade = await controller_ator_atividade.excluirAtividadesIdAtor(ator.id)
+        if(resultDeleteAtividade.status){
+            for (const atividade of ator.atividade) {
+                let atorAtividade = { id_atividade: atividade.id, id_ator: ator.id }
+                let resultInsertAtividade = await controller_ator_atividade.inserirNovoAtorAtividade(atorAtividade, contentType)
+                if(!resultInsertAtividade.status) return message.SUCESS_CREATED_ITEM_WARNING // 201
+            }
+        }
+        
+        // Manipulação de dados entre as tabelas ator e nacionalidade
+        let resultDeleteNacionalidade = await controller_ator_nacionalidade.excluirNacionalidadesIdAtor(ator.id)
+        if(resultDeleteNacionalidade.status){
+            for (const nacionalidade of ator.nacionalidade) {
+                let atorNacionalidade = { id_nacionalidade: nacionalidade.id, id_ator: ator.id }
+                let resultInsertNacionalidade = await controller_ator_nacionalidade.inserirNovoAtorNacionalidade(atorNacionalidade, contentType)
+                if(!resultInsertNacionalidade.status) return message.SUCESS_CREATED_ITEM_WARNING // 201
+            }
+        }
 
         return await montarMensagem(message, message.SUCESS_UPDATE_ITEM, ator) // 200
 
