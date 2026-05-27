@@ -39,6 +39,7 @@ const updateAtorAtividade = async (atorAtividade) => {
 
     return false
 }
+
 // select de todas atorAtividades
 const selectAllAtorAtividade = async () => {
     let sql = `SELECT * FROM tbl_ator_atividade ORDER BY id DESC`
@@ -65,6 +66,7 @@ const selectByIdAtorAtividade = async (id) => {
 
     return false
 }
+
 // delete de atorAtividade
 const deleteAtorAtividade = async (id) => {
     let sql = `DELETE FROM tbl_ator_atividade

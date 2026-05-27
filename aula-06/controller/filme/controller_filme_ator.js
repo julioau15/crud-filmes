@@ -110,8 +110,8 @@ const excluirFilmeAtor = async (id) => {
     return message.ERROR_INTERNAL_SERVER_CONTROLLER // 500
 }
 
-// buscar filme pelo id do Ator
-const buscarFilmeIdAtor = async (idAtor) => {
+// buscar filmes pelo id do Ator
+const buscarFilmesIdAtor = async (idAtor) => {
     let message = JSON.parse(JSON.stringify(config_message))
 
     try {
@@ -131,8 +131,8 @@ const buscarFilmeIdAtor = async (idAtor) => {
     return message.ERROR_INTERNAL_SERVER_CONTROLLER // 500
 }
 
-// buscar ator pelo id do filme
-const buscarAtorIdFilme = async (idFilme) => {
+// buscar atores pelo id do filme
+const buscarAtoresIdFilme = async (idFilme) => {
     let message = JSON.parse(JSON.stringify(config_message))
 
     try {
@@ -198,6 +198,6 @@ module.exports = {
     listarFilmeAtor,
     buscarFilmeAtor,
     excluirFilmeAtor,
-    buscarFilmeIdAtor,
-    buscarAtorIdFilme
+    buscarFilmesIdAtor,
+    buscarAtoresIdFilme
 }

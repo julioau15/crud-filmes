@@ -114,17 +114,17 @@ const listarFilme = async () => {
                 delete filme.id_classificacao
             }
 
-            let genero = await controller_filme_genero.buscarGeneroIdFilme(filme.id)
+            let genero = await controller_filme_genero.buscarGenerosIdFilme(filme.id)
             if(genero.status){
                 filme.genero = genero.response.filmeGenero
             }
 
-            let ator = await controller_filme_ator.buscarAtorIdFilme(filme.id)
+            let ator = await controller_filme_ator.buscarAtoresIdFilme(filme.id)
             if(ator.status){
                 filme.ator = ator.response.filmeAtor
             }
 
-            let diretor = await controller_filme_diretor.buscarDiretorIdFilme(filme.id)
+            let diretor = await controller_filme_diretor.buscarDiretoresIdFilme(filme.id)
             if(diretor.status){
                 filme.diretor = diretor.response.filmeDiretor
             }
@@ -161,17 +161,17 @@ const buscarFilme = async (id) => {
                 delete filme.id_classificacao
             }
 
-            let genero = await controller_filme_genero.buscarGeneroIdFilme(filme.id)
+            let genero = await controller_filme_genero.buscarGenerosIdFilme(filme.id)
             if(genero.status){
                 filme.genero = genero.response.filmeGenero
             }
 
-            let ator = await controller_filme_ator.buscarAtorIdFilme(filme.id)
+            let ator = await controller_filme_ator.buscarAtoresIdFilme(filme.id)
             if(ator.status){
                 filme.ator = ator.response.filmeAtor
             }
 
-            let diretor = await controller_filme_diretor.buscarDiretorIdFilme(filme.id)
+            let diretor = await controller_filme_diretor.buscarDiretoresIdFilme(filme.id)
             if(diretor.status){
                 filme.diretor = diretor.response.filmeDiretor
             }

@@ -39,6 +39,7 @@ const updateFilmeDiretor = async (filmeDiretor) => {
 
     return false
 }
+
 // select de todas filmeDiretors
 const selectAllFilmeDiretor = async () => {
     let sql = `SELECT * FROM tbl_filme_diretor ORDER BY id DESC`
@@ -65,6 +66,7 @@ const selectByIdFilmeDiretor = async (id) => {
 
     return false
 }
+
 // delete de filmeDiretor
 const deleteFilmeDiretor = async (id) => {
     let sql = `DELETE FROM tbl_filme_diretor
@@ -78,45 +80,6 @@ const deleteFilmeDiretor = async (id) => {
 
     return false
 }
-
-// select de todos Diretores buscando pelo id do nacionalidade
-const selectDiretoresByIdNacionalidade = async (idNacionalidade) => {
-    let sql = `SELECT tbl_diretor.*
-               FROM tbl_nacionalidade
-                    INNER JOIN tbl_diretor_nacionalidade
-                        ON tbl_nacionalidade.id = tbl_diretor_nacionalidade.id_nacionalidade
-                    INNER JOIN tbl_diretor
-                        ON tbl_diretor.id = tbl_diretor_nacionalidade.id_diretor
-               WHERE tbl_nacionalidade.id = ${idNacionalidade}`
-    try {
-        let response = await knexConex.raw(sql)
-
-        if(response) return response[0]
-        
-    } catch (error) {console.log(error)}
-
-    return false
-}
-
-// select de todas nacionalidades buscando pelo id do diretor
-const selectNacionalidadesByIdDiretor = async (idDiretor) => {
-    let sql = `SELECT tbl_nacionalidade.*
-               FROM tbl_nacionalidade
-                    INNER JOIN tbl_diretor_nacionalidade
-                        ON tbl_nacionalidade.id = tbl_diretor_nacionalidade.id_nacionalidade
-                    INNER JOIN tbl_diretor
-                        ON tbl_diretor.id = tbl_diretor_nacionalidade.id_diretor
-               WHERE tbl_diretor.id = ${idDiretor}`
-    try {
-        let response = await knexConex.raw(sql)
-
-        if(response) return response[0]
-        
-    } catch (error) {console.log(error)}
-
-    return false
-}
-
 
 // select de todos filmes buscando pelo id do diretor
 const selectFilmesByDiretor = async (idDiretor) => {
@@ -155,7 +118,6 @@ const selectDiretoresByFilme = async (idFilme) => {
 
     return false
 }
-
 
 module.exports = {
     insertFilmeDiretor,

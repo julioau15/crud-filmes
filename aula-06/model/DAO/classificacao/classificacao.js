@@ -44,6 +44,7 @@ const updateClassificacao = async (classificacao) => {
 
     return false
 }
+
 // select de todas classificacaos
 const selectAllClassificacao = async () => {
     let sql = `SELECT * FROM tbl_classificacao ORDER BY id DESC`
@@ -72,6 +73,7 @@ const selectByIdClassificacao = async (id) => {
 
     return false
 }
+
 // delete de classificacao
 const deleteClassificacao = async (id) => {
     let sql = `DELETE FROM tbl_classificacao

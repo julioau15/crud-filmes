@@ -79,15 +79,11 @@ const listarDiretor = async () => {
             let atividades = await controller_diretor_atividade.buscarAtividadesIdDiretor(diretor.id)
             if(atividades.status) {
                 diretor.atividade = atividades.response.diretorAtividade
-            } else {
-                diretor.atividade = []
-            }
+            } 
 
             let nacionalidades = await controller_diretor_nacionalidade.buscarNacionalidadesIdDiretor(diretor.id)
             if(nacionalidades.status) {
                 diretor.nacionalidade = nacionalidades.response.diretorNacionalidade
-            } else {
-                diretor.nacionalidade = []
             }
         }
 
@@ -119,15 +115,11 @@ const buscarDiretor = async (id) => {
             let atividades = await controller_diretor_atividade.buscarAtividadesIdDiretor(diretor.id)
             if(atividades.status) {
                 diretor.atividade = atividades.response.diretorAtividade
-            } else {
-                diretor.atividade = []
             }
 
             let nacionalidades = await controller_diretor_nacionalidade.buscarNacionalidadesIdDiretor(diretor.id)
             if(nacionalidades.status) {
                 diretor.nacionalidade = nacionalidades.response.diretorNacionalidade
-            } else {
-                diretor.nacionalidade = []
             }
         }
 

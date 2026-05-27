@@ -79,15 +79,11 @@ const listarAtor = async () => {
             let atividades = await controller_ator_atividade.buscarAtividadesIdAtor(ator.id)
             if(atividades.status) {
                 ator.atividade = atividades.response.atorAtividade
-            } else {
-                ator.atividade = []
             }
 
             let nacionalidades = await controller_ator_nacionalidade.buscarNacionalidadesIdAtor(ator.id)
             if(nacionalidades.status) {
                 ator.nacionalidade = nacionalidades.response.atorNacionalidade
-            } else {
-                ator.nacionalidade = []
             }
         }
 
@@ -119,15 +115,11 @@ const buscarAtor = async (id) => {
             let atividades = await controller_ator_atividade.buscarAtividadesIdAtor(ator.id)
             if(atividades.status) {
                 ator.atividade = atividades.response.atorAtividade
-            } else {
-                ator.atividade = []
             }
 
             let nacionalidades = await controller_ator_nacionalidade.buscarNacionalidadesIdAtor(ator.id)
             if(nacionalidades.status) {
                 ator.nacionalidade = nacionalidades.response.atorNacionalidade
-            } else {
-                ator.nacionalidade = []
             }
         }
 

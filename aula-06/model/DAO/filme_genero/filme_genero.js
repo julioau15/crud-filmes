@@ -39,6 +39,7 @@ const updateFilmeGenero = async (filmeGenero) => {
 
     return false
 }
+
 // select de todas filmeGeneros
 const selectAllFilmeGenero = async () => {
     let sql = `SELECT * FROM tbl_filme_genero ORDER BY id DESC`
@@ -65,6 +66,7 @@ const selectByIdFilmeGenero = async (id) => {
 
     return false
 }
+
 // delete de filmeGenero
 const deleteFilmeGenero = async (id) => {
     let sql = `DELETE FROM tbl_filme_genero

@@ -51,6 +51,7 @@ const updateAtor = async (ator) => {
 
     return false
 }
+
 // select de todas ators
 const selectAllAtor = async () => {
     let sql = `SELECT * FROM tbl_ator ORDER BY id DESC`
@@ -79,6 +80,7 @@ const selectByIdAtor = async (id) => {
 
     return false
 }
+
 // delete de ator
 const deleteAtor = async (id) => {
     let sql = `DELETE FROM tbl_ator

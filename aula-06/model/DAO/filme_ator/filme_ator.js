@@ -39,6 +39,7 @@ const updateFilmeAtor = async (filmeAtor) => {
 
     return false
 }
+
 // select de todas filmeAtors
 const selectAllFilmeAtor = async () => {
     let sql = `SELECT * FROM tbl_filme_ator ORDER BY id DESC`
@@ -65,6 +66,7 @@ const selectByIdFilmeAtor = async (id) => {
 
     return false
 }
+
 // delete de filmeAtor
 const deleteFilmeAtor = async (id) => {
     let sql = `DELETE FROM tbl_filme_ator
@@ -116,7 +118,6 @@ const selectAtoresByIdFilme = async (idFilme) => {
 
     return false
 }
-
 
 module.exports = {
     insertFilmeAtor,

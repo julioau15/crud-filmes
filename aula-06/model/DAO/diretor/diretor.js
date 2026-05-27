@@ -51,6 +51,7 @@ const updateDiretor = async (diretor) => {
 
     return false
 }
+
 // select de todas diretors
 const selectAllDiretor = async () => {
     let sql = `SELECT * FROM tbl_diretor ORDER BY id DESC`
@@ -79,6 +80,7 @@ const selectByIdDiretor = async (id) => {
 
     return false
 }
+
 // delete de diretor
 const deleteDiretor = async (id) => {
     let sql = `DELETE FROM tbl_diretor
