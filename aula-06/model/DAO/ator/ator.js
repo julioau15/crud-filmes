@@ -54,7 +54,18 @@ const updateAtor = async (ator) => {
 
 // select de todas ators
 const selectAllAtor = async () => {
-    let sql = `SELECT * FROM tbl_ator ORDER BY id DESC`
+    let sql = ` SELECT
+                id,
+                nome,
+                data_nascimento, 
+                date_format(data_nascimento, '%d/%m/%Y') as data_nascimento_formatada, 
+                data_falecimento, 
+                if(data_falecimento = null, null, date_format(data_falecimento, '%d/%m/%Y'))  as data_falecimento_formatada, 
+                ativo, 
+                biografia, 
+                foto
+                FROM tbl_ator
+                ORDER BY id DESC`
     try {
         let response = await knexConex.raw(sql)
 
@@ -68,8 +79,19 @@ const selectAllAtor = async () => {
 
 // select de uma ator pelo id
 const selectByIdAtor = async (id) => {
-    let sql = `SELECT * FROM tbl_ator
-               WHERE id = ${id}`
+    let sql = ` SELECT
+                id,
+                nome,
+                data_nascimento, 
+                date_format(data_nascimento, '%d/%m/%Y') as data_nascimento_formatada, 
+                data_falecimento, 
+                if(data_falecimento = null, null, date_format(data_falecimento, '%d/%m/%Y'))  as data_falecimento_formatada, 
+                ativo, 
+                biografia, 
+                foto
+                FROM tbl_ator
+                WHERE id = ${id}
+                ORDER BY id DESC`
     try {
         let response = await knexConex.raw(sql)
 

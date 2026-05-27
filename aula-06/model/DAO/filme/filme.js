@@ -88,7 +88,17 @@ const updateFilme = async (filme) => {
 const selectAllFilme = async () => {
     try {
         // script para retornar todos os filmes ondenando pelo id em ordem decrescente
-        let sql = `SELECT * FROM tbl_filme ORDER BY id DESC;`
+        let sql = ` SELECT
+                    tbl_filme.id,
+                    tbl_filme.nome, 
+                    tbl_filme.data_lancamento, 
+                    date_format(tbl_filme.data_lancamento, '%d/%m/%Y') as data_lancamento_formatada, 
+                    tbl_filme.duracao, 
+                    tbl_filme.sinopse, 
+                    tbl_filme.avaliacao, 
+                    tbl_filme.valor, 
+                    tbl_filme.capa
+                    FROM tbl_filme ORDER BY id DESC`
         
         // executa o script para retornar todos filmes no banco
         let result = await knexConex.raw(sql)
@@ -108,7 +118,17 @@ const selectAllFilme = async () => {
 const selectByIdFilme = async (id) => {
     try {
         // script para retornar todos os filmes
-        let sql = `SELECT * FROM tbl_filme WHERE id = ${id} ORDER BY id DESC;`
+        let sql = ` SELECT
+                    tbl_filme.id,
+                    tbl_filme.nome, 
+                    tbl_filme.data_lancamento, 
+                    date_format(tbl_filme.data_lancamento, '%d/%m/%Y') as data_lancamento_formatada, 
+                    tbl_filme.duracao, 
+                    tbl_filme.sinopse, 
+                    tbl_filme.avaliacao, 
+                    tbl_filme.valor, 
+                    tbl_filme.capa
+                    FROM tbl_filme WHERE id = ${id} ORDER BY id DESC;`
         
         // executa o script para retornar todos filmes no banco
         let result = await knexConex.raw(sql)

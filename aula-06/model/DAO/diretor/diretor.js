@@ -54,7 +54,19 @@ const updateDiretor = async (diretor) => {
 
 // select de todas diretors
 const selectAllDiretor = async () => {
-    let sql = `SELECT * FROM tbl_diretor ORDER BY id DESC`
+    let sql = ` SELECT
+                id,
+                nome, 
+                data_nascimento, 
+                date_format(data_nascimento, '%d/%m/%Y') as data_nascimento_formatada, 
+                data_falecimento, 
+                if(data_falecimento = null, null, date_format(data_falecimento, '%d/%m/%Y'))  as data_falecimento_formatada, 
+                ativo, 
+                biografia, 
+                foto
+                FROM tbl_diretor
+                ORDER BY id
+                DESC`
     try {
         let response = await knexConex.raw(sql)
 
@@ -68,8 +80,20 @@ const selectAllDiretor = async () => {
 
 // select de uma diretor pelo id
 const selectByIdDiretor = async (id) => {
-    let sql = `SELECT * FROM tbl_diretor
-               WHERE id = ${id}`
+    let sql = ` SELECT
+                id,
+                nome, 
+                data_nascimento, 
+                date_format(data_nascimento, '%d/%m/%Y') as data_nascimento_formatada, 
+                data_falecimento, 
+                if(data_falecimento = null, null, date_format(data_falecimento, '%d/%m/%Y'))  as data_falecimento_formatada, 
+                ativo, 
+                biografia, 
+                foto
+                FROM tbl_diretor
+                WHERE id = ${id}
+                ORDER BY id
+                DESC`
     try {
         let response = await knexConex.raw(sql)
 
