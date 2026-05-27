@@ -24,6 +24,8 @@ const SUCESS_UPDATE_ITEM = {"status": true, "status_code": 200, "message":"Regis
 
 const SUCESS_DELETE_ITEM = {"status": true, "status_code": 200, "message":"Registro apagado com sucesso!"}
 
+const SUCESS_CREATED_ITEM_WARNING = {"status": true, "status_code": 201, "message": "Os dados principais foram inseridos com sucesso, porém alguns dados apresentaram problemas!"}
+
 // Mensagens de erro da API
 const ERROR_BAD_REQUEST = { "status": false, "status_code": 400, "message": "Os dados enviados na requisição não estão corretos."}
 
@@ -46,5 +48,6 @@ module.exports = {
     ERROR_NOT_FOUND,
     SUCESS_RESPONSE,
     SUCESS_UPDATE_ITEM,
-    SUCESS_DELETE_ITEM
+    SUCESS_DELETE_ITEM,
+    SUCESS_CREATED_ITEM_WARNING
 }

@@ -42,6 +42,7 @@ const updateNacionalidade = async (nacionalidade) => {
 
     return false
 }
+
 // select de todas nacionalidades
 const selectAllNacionalidade = async () => {
     let sql = `SELECT * FROM tbl_nacionalidade ORDER BY id DESC`
@@ -70,6 +71,7 @@ const selectByIdNacionalidade = async (id) => {
 
     return false
 }
+
 // delete de nacionalidade
 const deleteNacionalidade = async (id) => {
     let sql = `DELETE FROM tbl_nacionalidade
